@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roue de la Chance - HappyLemon</title>
+    <title>Jeu à Gratter - HappyLemon</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #fefae0; /* Lemon-like background color */
+            background-color: #fefae0; /* Couleur de fond citron */
             padding: 20px;
             margin: 0;
         }
@@ -23,50 +23,54 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            color: #ffcc00; /* Lemon yellow */
+            color: #ffcc00; /* Couleur jaune HappyLemon */
         }
-        .button {
-            background-color: #ffcc00;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
+        #scratch-area {
+            margin: 20px auto;
+            width: 300px;
+            height: 150px;
+            border: 2px solid #ffcc00; /* Bordure jaune */
+            position: relative;
+            background-color: #f7f7f7; /* Couleur de fond */
         }
-        .button:hover {
-            background-color: #ffaa00;
-        }
-        iframe {
+        .message {
+            font-size: 18px;
             margin-top: 20px;
-            width: 100%;
-            height: 400px;
-        }
-        .logo {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 150px;
-        }
-        .footer {
-            margin-top: 30px;
-            color: #555;
-            font-size: 14px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <img src="04463453-BF4E-44BE-8550-9145243C048D.jpeg" alt="HappyLemon Logo" class="logo">
     <div class="container">
-        <h1>Roue de la Chance - HappyLemon</h1>
-        <p>Merci de votre soutien ! Suivez ces étapes pour tenter de gagner un cadeau :</p>
-        <ol style="text-align: left;">
-            <li>Scannez le QR code ou cliquez <a href="https://g.page/r/CZO81H5HBAIzEBE/review" target="_blank" class="button">ici</a> pour laisser un avis Google sur HappyLemon Opéra.</li>
-            <li>Revenez sur cette page après avoir publié votre avis.</li>
-            <li>Tournez la roue ci-dessous pour tenter votre chance !</li>
-        </ol>
-        <iframe src="https://wheelofnames.com/" frameborder="0" title="Roue de la Chance"></iframe>
-        <p class="footer">Montrez votre écran en boutique pour récupérer votre récompense !</p>
+        <h1>Jeu à Gratter - HappyLemon</h1>
+        <p>Grattez pour découvrir si vous avez gagné !</p>
+        <div id="scratch-area"></div>
+        <div class="message" id="result-message"></div>
     </div>
+
+    <!-- Importation de la bibliothèque Scratch Card JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/scratchcard/1.0.3/scratchcard.min.js"></script>
+    <script>
+        // Initialisation du jeu à gratter
+        const scratchCard = new ScratchCard('#scratch-area', {
+            scratchType: SCRATCH_TYPE.CIRCLE,
+            containerWidth: 300,
+            containerHeight: 150,
+            imageForwardSrc: 'https://via.placeholder.com/300x150/cccccc?text=Grattez+ici', // Image à gratter
+            imageBackgroundSrc: 'https://via.placeholder.com/300x150/ffcc00?text=Gagné!', // Image de fond
+            callback: function () {
+                // Probabilité de gagner : 15 %
+                const isWinner = Math.random() < 0.15; 
+                const resultMessage = document.getElementById('result-message');
+                if (isWinner) {
+                    resultMessage.textContent = '🎉 Félicitations, vous avez gagné un topping gratuit !';
+                } else {
+                    resultMessage.textContent = 'Merci pour votre participation ! Bonne chance la prochaine fois !';
+                }
+            },
+        });
+        scratchCard.init();
+    </script>
 </body>
 </html>
 <div id="email-section" style="display:none;">
