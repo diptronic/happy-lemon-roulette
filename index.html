@@ -3,133 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter - HappyLemon</title>
+    <title>Diagnostic - Jeu à Gratter</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #fefae0; /* Fond jaune citron */
+            background-color: #fefae0;
             padding: 20px;
             margin: 0;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
         canvas {
-            margin: 20px auto;
-            border: 2px solid #ffcc00;
-            display: block;
-        }
-        .message {
-            font-size: 18px;
             margin-top: 20px;
-            color: #333;
+            border: 2px solid #ffcc00;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Jeu à Gratter - HappyLemon</h1>
-        <canvas id="scratchCanvas" width="300" height="150"></canvas>
-        <div id="result-message"></div>
-    </div>
-
+    <h1>Diagnostic - Jeu à Gratter</h1>
+    <canvas id="scratchCanvas" width="300" height="150"></canvas>
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
-        const resultMessage = document.getElementById('result-message');
 
-        // Dessine la surface grattable
-        ctx.fillStyle = "#ccc"; // Couleur grise
+        console.log("Canvas initialisé :", canvas);
+
+        // Test : Dessiner un fond de couleur dans le canvas
+        ctx.fillStyle = "lightblue";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#000"; // Texte noir
-        ctx.font = "20px Arial";
-        ctx.fillText("Grattez ici", canvas.width / 2 - 50, canvas.height / 2);
+        console.log("Fond bleu dessiné dans le canvas.");
 
-        // Charge les images
-        const wonImage = new Image();
-        const lostImage = new Image();
+        // Charger une image pour le test
+        const testImage = new Image();
+        testImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // Votre image ici
 
-        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // URL "Gagné"
-        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/perdu_hl.jpg"; // URL "Perdu"
-
-        let wonImageLoaded = false;
-        let lostImageLoaded = false;
-
-        wonImage.onload = () => {
-            console.log("Image 'Gagné' chargée :", wonImage.src);
-            wonImageLoaded = true;
-            if (wonImageLoaded && lostImageLoaded) initGame();
+        testImage.onload = () => {
+            console.log("Image chargée :", testImage.src);
+            ctx.drawImage(testImage, 0, 0, canvas.width, canvas.height);
         };
 
-        lostImage.onload = () => {
-            console.log("Image 'Perdu' chargée :", lostImage.src);
-            lostImageLoaded = true;
-            if (wonImageLoaded && lostImageLoaded) initGame();
+        testImage.onerror = () => {
+            console.error("Erreur de chargement de l'image :", testImage.src);
         };
-
-        wonImage.onerror = () => console.error("Erreur de chargement de l'image 'Gagné'.");
-        lostImage.onerror = () => console.error("Erreur de chargement de l'image 'Perdu'.");
-
-        function initGame() {
-            console.log("Les images sont prêtes. Le jeu commence !");
-            let isDrawing = false;
-
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseleave', stopDrawing);
-
-            canvas.addEventListener('touchstart', startDrawing);
-            canvas.addEventListener('touchmove', draw);
-            canvas.addEventListener('touchend', stopDrawing);
-
-            function startDrawing(e) {
-                isDrawing = true;
-            }
-
-            function stopDrawing() {
-                isDrawing = false;
-
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const pixels = imageData.data;
-                let scratchedPixels = 0;
-
-                for (let i = 3; i < pixels.length; i += 4) {
-                    if (pixels[i] === 0) scratchedPixels++;
-                }
-
-                const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
-
-                if (scratchedPercentage > 50) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Révèle l'image
-                    const isWinner = Math.random() < 0.15;
-                    ctx.drawImage(isWinner ? wonImage : lostImage, 0, 0, canvas.width, canvas.height);
-                    resultMessage.textContent = isWinner
-                        ? "🎉 Félicitations, vous avez gagné !"
-                        : "Dommage, vous avez perdu !";
-                }
-            }
-
-            function draw(e) {
-                if (!isDrawing) return;
-
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-                ctx.globalCompositeOperation = "destination-out";
-                ctx.beginPath();
-                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
-                ctx.fill();
-            }
-        }
     </script>
 </body>
 </html>
