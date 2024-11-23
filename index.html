@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter - Débogage</title>
+    <title>Jeu à Gratter HappyLemon France</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
             margin: 0;
-            overflow: hidden; /* Empêche le scrolling */
+            overflow: hidden;
         }
         .scratch-container {
             position: relative;
@@ -22,11 +22,14 @@
         canvas {
             display: block;
             margin: 0 auto;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
 <body>
-    <h1>Jeu à Gratter - Débogage</h1>
+    <h1>Jeu à Gratter HappyLemon France</h1>
     <div class="scratch-container">
         <canvas id="scratchCanvas" width="350" height="200"></canvas>
     </div>
@@ -34,44 +37,31 @@
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
-        const debugOutput = document.getElementById('debugOutput');
         let isDrawing = false;
 
         // Charger l'image de fond
         const backgroundImage = new Image();
-        backgroundImage.crossOrigin = "anonymous"; // Autoriser les images externes
         backgroundImage.src = "https://i.imgur.com/kRhG7ix.jpeg"; // Exemple : image gagnante
-
         backgroundImage.onload = () => {
-            debugOutput.textContent = "Image de fond chargée.";
             // Dessiner l'image de fond
             ctx.globalCompositeOperation = "source-over";
             ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-            // Dessiner la couche grise par-dessus
+            // Appliquer la couche grise par-dessus
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            console.log("Image et masque dessinés.");
         };
 
-        // Activer le grattage
-        canvas.addEventListener('mousedown', () => {
-            isDrawing = true;
-            debugOutput.textContent = "Grattage commencé.";
-        });
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-            debugOutput.textContent = "Grattage arrêté.";
-        });
+        // Événements de grattage
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
         canvas.addEventListener('mousemove', scratch);
 
         canvas.addEventListener('touchstart', (e) => {
             isDrawing = true;
-            debugOutput.textContent = "Grattage commencé (tactile).";
             scratch(e);
         }, { passive: false });
-        canvas.addEventListener('touchend', () => {
-            isDrawing = false;
-            debugOutput.textContent = "Grattage arrêté (tactile).";
-        }, { passive: false });
+        canvas.addEventListener('touchend', () => isDrawing = false, { passive: false });
         canvas.addEventListener('touchmove', scratch, { passive: false });
 
         function scratch(e) {
@@ -81,9 +71,7 @@
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-            debugOutput.textContent = `Grattage en cours à X: ${Math.round(x)}, Y: ${Math.round(y)}`;
-
-            // Effacer la couche grise sous le curseur
+            // Effacer la couche grise
             ctx.globalCompositeOperation = "destination-out";
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
