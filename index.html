@@ -24,14 +24,6 @@
             left: 0;
             z-index: 2;
         }
-        .background-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
         .message {
             font-size: 20px;
             margin-top: 20px;
@@ -84,8 +76,9 @@
         const newsletter = document.getElementById('newsletter');
         let isDrawing = false;
 
-        // Étape 1 : Charger l'image en arrière-plan
+        // Étape 1 : Charger l'image en arrière-plan avec l'attribut crossOrigin
         const backgroundImage = new Image();
+        backgroundImage.crossOrigin = "anonymous"; // Permet d'utiliser l'image sur le canvas sans taint
         const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
         backgroundImage.src = isWinner
             ? "https://i.imgur.com/kRhG7ix.jpeg" // Image Gagné
@@ -94,6 +87,11 @@
         backgroundImage.onload = () => {
             ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             drawMask(); // Dessiner la couche grise
+        };
+
+        backgroundImage.onerror = () => {
+            console.error("Erreur lors du chargement de l'image");
+            resultMessage.textContent = "Erreur lors du chargement du jeu. Veuillez réessayer plus tard.";
         };
 
         // Étape 2 : Dessiner la couche grise
