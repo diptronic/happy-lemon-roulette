@@ -22,7 +22,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 2; /* Le canvas est au-dessus de l'image */
+            z-index: 2;
         }
         .background-image {
             position: absolute;
@@ -31,7 +31,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            z-index: 1; /* L'image est derrière le canvas */
         }
         .message {
             font-size: 20px;
@@ -66,8 +65,6 @@
 <body>
     <h1>Jeu à Gratter HappyLemon France</h1>
     <div class="scratch-container">
-        <img src="https://i.imgur.com/kRhG7ix.jpeg" id="winImage" class="background-image" alt="Image Gagné" style="display: none;">
-        <img src="https://i.imgur.com/NyJhyhw.jpeg" id="loseImage" class="background-image" alt="Image Perdu" style="display: none;">
         <canvas id="scratchCanvas" width="350" height="200"></canvas>
     </div>
     <div class="message" id="resultMessage"></div>
@@ -83,19 +80,30 @@
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
-        const winImage = document.getElementById('winImage');
-        const loseImage = document.getElementById('loseImage');
         const resultMessage = document.getElementById('resultMessage');
         const newsletter = document.getElementById('newsletter');
         let isDrawing = false;
 
-        // Étape 1 : Dessiner la couche grise
+        // Étape 1 : Charger l'image en arrière-plan
+        const backgroundImage = new Image();
+        const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
+        backgroundImage.src = isWinner
+            ? "https://i.imgur.com/kRhG7ix.jpeg" // Image Gagné
+            : "https://i.imgur.com/NyJhyhw.jpeg"; // Image Perdu
+
+        backgroundImage.onload = () => {
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            drawMask(); // Dessiner la couche grise
+        };
+
+        // Étape 2 : Dessiner la couche grise
         function drawMask() {
+            ctx.globalCompositeOperation = "source-over";
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Étape 2 : Activer le grattage
+        // Étape 3 : Activer le grattage
         function activateScratch() {
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mouseup', stopDrawing);
@@ -129,6 +137,7 @@
             ctx.fill();
         }
 
+        // Étape 4 : Vérifier si 50% de la couche a été grattée
         function checkCompletion() {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let scratchedPixels = 0;
@@ -143,26 +152,19 @@
             }
         }
 
+        // Étape 5 : Révéler le résultat
         function revealResult() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = "source-over";
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
-            const isWinner = Math.random() < 0.13; // 13% de chances de gagner
-
-            if (isWinner) {
-                winImage.style.display = "block";
-                loseImage.style.display = "none";
-                resultMessage.textContent = "🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !";
-            } else {
-                loseImage.style.display = "block";
-                winImage.style.display = "none";
-                resultMessage.textContent = "C'est perdu :( Merci de votre participation!";
-            }
-
+            resultMessage.textContent = isWinner
+                ? "🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !"
+                : "C'est perdu :( Merci de votre participation!";
             newsletter.style.display = 'block';
         }
 
         // Initialisation
-        drawMask(); // Dessiner la couche grise
         activateScratch(); // Activer le grattage
     </script>
 </body>
