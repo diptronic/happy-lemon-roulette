@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Dessin Canvas</title>
+    <title>Jeu à Gratter - HappyLemon</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
+            overflow: hidden;
         }
         canvas {
             margin: 20px auto;
@@ -18,20 +19,76 @@
     </style>
 </head>
 <body>
-    <h1>Test Dessin Canvas</h1>
-    <canvas id="testCanvas" width="300" height="150"></canvas>
+    <h1>Jeu à Gratter - HappyLemon</h1>
+    <canvas id="scratchCanvas" width="300" height="150"></canvas>
     <script>
-        const canvas = document.getElementById('testCanvas');
+        const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
 
         const bgImage = new Image();
-        bgImage.src = "https://i.postimg.cc/NjK8mC40/gagne-hl.jpg"; // Image "Gagné"
+        bgImage.src = "https://i.postimg.cc/NjK8mC40/gagne-hl.jpg"; // Image de fond "Gagné"
 
         bgImage.onload = () => {
             console.log("Image de fond chargée :", bgImage.src);
-            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height); // Dessine l'image
+
+            // Dessine l'image de fond
+            ctx.globalCompositeOperation = "source-over";
+            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+
+            // Ajoute une couche grise par-dessus
+            ctx.fillStyle = "#ccc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Ajoute le texte "Grattez ici"
+            ctx.fillStyle = "#000";
+            ctx.font = "20px Arial";
+            ctx.fillText("Grattez ici", 100, 75);
+
+            // Active le grattage
+            activateScratch();
         };
 
+        function activateScratch() {
+            let isDrawing = false;
+
+            canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+            canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+            // Événements pour la souris
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+
+            // Événements pour le tactile
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDrawing);
+
+            function startDrawing() {
+                isDrawing = true;
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+                // Applique l'effet de grattage
+                ctx.globalCompositeOperation = "destination-out"; // Supprime la couche grise
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+            }
+        }
+
+        // Gestion des erreurs de chargement
         bgImage.onerror = () => {
             console.error("Erreur de chargement de l'image :", bgImage.src);
         };
