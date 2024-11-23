@@ -61,10 +61,10 @@
 
         // Charge les images pour "Gagné" et "Perdu"
         const wonImage = new Image();
-        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/Gagn%C3%A9%20HL.jpg"; // Remplacez par l’URL réelle de votre image "Gagné"
+        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // Remplacez par l’URL réelle de votre image "Gagné"
 
         const lostImage = new Image();
-        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/Perdu%20HL.jpg"; // Remplacez par l’URL réelle de votre image "Perdu"
+        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/perdu_hl.jpg"; // Remplacez par l’URL réelle de votre image "Perdu"
 
         wonImage.onload = () => lostImage.onload = () => {
             let isDrawing = false;
