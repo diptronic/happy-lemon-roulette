@@ -119,6 +119,8 @@
 
         const sections = ["GAGNÉ", "PERDU", "PERDU", "PERDU", "PERDU", "PERDU"];
         const colors = ["#ffd700", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"];
+        const anglePerSection = 360 / sections.length;
+
         let isSpinning = false;
 
         // Dessiner la roue
@@ -126,11 +128,10 @@
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = canvas.width / 2;
-            const anglePerSection = (2 * Math.PI) / sections.length;
 
             for (let i = 0; i < sections.length; i++) {
-                const startAngle = i * anglePerSection;
-                const endAngle = (i + 1) * anglePerSection;
+                const startAngle = (i * anglePerSection * Math.PI) / 180;
+                const endAngle = ((i + 1) * anglePerSection * Math.PI) / 180;
 
                 // Dessiner la section
                 ctx.beginPath();
@@ -141,7 +142,7 @@
                 ctx.stroke();
 
                 // Ajouter le texte
-                const textAngle = startAngle + anglePerSection / 2;
+                const textAngle = startAngle + (endAngle - startAngle) / 2;
                 const textX = centerX + Math.cos(textAngle) * (radius * 0.6);
                 const textY = centerY + Math.sin(textAngle) * (radius * 0.6);
                 ctx.save();
@@ -169,8 +170,8 @@
             canvas.style.transform = `rotate(${rotation}deg)`;
 
             setTimeout(() => {
-                const finalDegree = (rotation % 360 + 30) % 360; // Ajustement pour pointer correctement
-                const sectionIndex = Math.floor(finalDegree / (360 / sections.length));
+                const finalDegree = (rotation % 360 + anglePerSection / 2) % 360; // Ajustement pour pointer correctement
+                const sectionIndex = Math.floor(finalDegree / anglePerSection);
                 const result = sections[sectionIndex];
 
                 let resultData = {};
@@ -203,3 +204,4 @@
     </script>
 </body>
 </html>
+
