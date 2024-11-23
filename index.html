@@ -59,19 +59,14 @@
         ctx.font = "20px Arial";
         ctx.fillText("Grattez ici", canvas.width / 2 - 50, canvas.height / 2);
 
-        // Charge l'image de fond (révélée après grattage)
-        const backgroundImage = new Image();
-        backgroundImage.src = "https://via.placeholder.com/300x150/ffcc00?text=Gagné!";
+        // Charge les images pour "Gagné" et "Perdu"
+        const wonImage = new Image();
+        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/Gagn%C3%A9%20HL.jpg"; // Remplacez par l’URL réelle de votre image "Gagné"
 
-        backgroundImage.onload = () => {
-            // Dessine l'image en arrière-plan
-            const offscreenCanvas = document.createElement('canvas');
-            offscreenCanvas.width = canvas.width;
-            offscreenCanvas.height = canvas.height;
-            const offscreenCtx = offscreenCanvas.getContext('2d');
-            offscreenCtx.drawImage(backgroundImage, 0, 0);
+        const lostImage = new Image();
+        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/Perdu%20HL.jpg"; // Remplacez par l’URL réelle de votre image "Perdu"
 
-            // Gestion des interactions
+        wonImage.onload = () => lostImage.onload = () => {
             let isDrawing = false;
 
             canvas.addEventListener('mousedown', startDrawing);
@@ -104,9 +99,10 @@
                 if (scratchedPercentage > 50) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height); // Révèle toute la surface
                     const isWinner = Math.random() < 0.15; // 15 % de chances de gagner
+                    ctx.drawImage(isWinner ? wonImage : lostImage, 0, 0, canvas.width, canvas.height);
                     resultMessage.textContent = isWinner
-                        ? "🎉 Félicitations, vous avez gagné un topping gratuit !"
-                        : "Merci pour votre participation !";
+                        ? "🎉 Félicitations, vous avez gagné !"
+                        : "Dommage, vous avez perdu !";
                 }
             }
 
