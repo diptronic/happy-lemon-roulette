@@ -47,19 +47,31 @@
         <div class="message" id="result-message"></div>
     </div>
 
-    <!-- Importation de wScratchPad -->
+    <!-- Formulaire email (facultatif) -->
+    <div id="email-section">
+        <p>Recevez nos nouveautés et promotions :</p>
+        <form action="https://formspree.io/f/xjkvolea" method="POST">
+            <label for="email">Votre email :</label><br>
+            <input type="email" id="email" name="email" placeholder="Votre email">
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
+
+    <!-- Importation des bibliothèques -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wScratchPad/2.2.0/wScratchPad.min.js"></script>
+    
     <script>
         // Initialisation de wScratchPad
-        const scratchPad = $('#scratch-pad').wScratchPad({
+        $('#scratch-pad').wScratchPad({
             size: 30, // Taille de l'outil de grattage
             bg: 'https://via.placeholder.com/300x150/ffcc00?text=Gagné!', // Image révélée après grattage
             fg: 'https://via.placeholder.com/300x150/cccccc?text=Grattez+ici', // Image à gratter
             scratchMove: function () {
                 // Calculer si suffisamment de surface a été grattée
-                const percentScratched = scratchPad.wScratchPad('percentage');
+                const percentScratched = $('#scratch-pad').wScratchPad('percentage');
                 if (percentScratched > 50) {
-                    scratchPad.wScratchPad('clear'); // Révèle toute la surface
+                    $('#scratch-pad').wScratchPad('clear'); // Révèle toute la surface
                     const isWinner = Math.random() < 0.15; // 15 % de chances de gagner
                     const resultMessage = document.getElementById('result-message');
                     if (isWinner) {
@@ -74,19 +86,6 @@
 </body>
 </html>
 
-
-        // Empêche le scrolling dans la zone de grattage
-        document.getElementById('scratch-area').addEventListener('touchmove', (e) => e.preventDefault());
-
-        scratchCard.init();
-    </script>
-</body>
-</html>
-<div id="email-section" style="display:none;">
-    <p>Recevez nos nouveautés et promotions :</p>
-    <form action="https://formspree.io/f/xjkvolea" method="POST">
-        <label for="email">Votre email :</label><br>
-        <input type="email" id="email" name="email" placeholder="Votre email">
         <button type="submit">S'inscrire</button>
     </form>
 </div>
