@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu Pile ou Face - HappyLemon</title>
+    <title>Jeu Pile ou Face - HappyLemon France</title>
     <style>
         body {
             font-family: Candara, Arial, sans-serif;
@@ -97,10 +97,19 @@
             font-size: 16px;
             cursor: pointer;
         }
+        #socialMedia {
+            margin-top: 20px;
+        }
+        #socialMedia a {
+            text-decoration: none;
+            color: #8B4513;
+            font-weight: bold;
+            margin: 0 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>Jeu Pile ou Face - HappyLemon</h1>
+    <h1>Jeu Pile ou Face - HappyLemon France</h1>
     <div class="coin-container">
         <div class="coin" id="coin">
             <div class="coin-face coin-front">?</div>
@@ -113,6 +122,11 @@
         <input type="email" name="email" placeholder="Votre email" required>
         <input type="submit" value="S'inscrire">
     </form>
+    <div id="socialMedia">
+        <p>Suivez-nous sur :</p>
+        <a href="https://www.instagram.com/happylemon_france/" target="_blank">@happylemon_france (Instagram)</a> et
+        <a href="https://www.tiktok.com/@happylemon.paris" target="_blank">@happylemon.paris (TikTok)</a>
+    </div>
 
     <script>
         const coin = document.getElementById('coin');
@@ -120,23 +134,20 @@
         const emailForm = document.getElementById('emailForm');
 
         flipButton.addEventListener('click', () => {
-            flipButton.disabled = true; // Désactiver le bouton après un clic
+            flipButton.disabled = true;
 
-            // Début de l'animation de la pièce
             const isWin = Math.random() < 0.15; // 15% de chances de gagner
             coin.classList.remove("show-back");
             setTimeout(() => {
                 if (isWin) {
-                    // Gagné : choisir le gain spécifique
                     const gainType = Math.random() < 0.5 ? "Un topping gratuit" : "10% de réduction sur votre prochain achat!";
                     coin.querySelector('.coin-back').textContent = "GAGNÉ";
                     coin.classList.add("show-back");
                     setTimeout(() => {
-                        alert(`🎉 Félicitations, vous avez gagné : ${gainType} !`);
+                        alert(`🎉 Félicitations, vous avez gagné : ${gainType} !`);
                         emailForm.style.display = "block";
                     }, 1000);
                 } else {
-                    // Perdu
                     coin.querySelector('.coin-back').textContent = "PERDU";
                     coin.classList.add("show-back");
                     setTimeout(() => {
