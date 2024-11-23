@@ -10,7 +10,7 @@
             text-align: center;
             background-color: #fefae0;
             margin: 0;
-            overflow: hidden; /* Empêche le scrolling global */
+            overflow: hidden; /* Empêche le scrolling */
         }
         .scratch-container {
             position: relative;
@@ -80,7 +80,7 @@
 
         // Charger l'image en arrière-plan
         const backgroundImage = new Image();
-        backgroundImage.crossOrigin = "anonymous"; // Important pour le support cross-origin
+        backgroundImage.crossOrigin = "anonymous";
         const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
         backgroundImage.src = isWinner
             ? "https://i.imgur.com/kRhG7ix.jpeg" // Image Gagné
