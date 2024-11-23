@@ -128,7 +128,7 @@
             setTimeout(() => {
                 if (isWin) {
                     // Gagné : choisir le gain spécifique
-                    const gainType = Math.random() < 0.75 ? "Un topping gratuit" : "10% de réduction";
+                    const gainType = Math.random() < 0.5 ? "Un topping gratuit" : "10% de réduction";
                     coin.querySelector('.coin-back').textContent = "GAGNÉ";
                     coin.classList.add("show-back");
                     setTimeout(() => {
