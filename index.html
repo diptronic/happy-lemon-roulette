@@ -8,7 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #fefae0; /* Fond jaune citron */
+            background-color: #fefae0;
             padding: 20px;
             margin: 0;
         }
@@ -26,11 +26,6 @@
             border: 2px solid #ffcc00;
             display: block;
         }
-        .message {
-            font-size: 18px;
-            margin-top: 20px;
-            color: #333;
-        }
     </style>
 </head>
 <body>
@@ -45,35 +40,34 @@
         const ctx = canvas.getContext('2d');
         const resultMessage = document.getElementById('result-message');
 
-        // Dessine la surface grattable
         ctx.fillStyle = "#ccc";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#000";
         ctx.font = "20px Arial";
         ctx.fillText("Grattez ici", canvas.width / 2 - 50, canvas.height / 2);
 
-        // Charge les images
         const wonImage = new Image();
         const lostImage = new Image();
 
-        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // Image "Gagné"
-        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/perdu_hl.jpg"; // Image "Perdu"
-
-        let wonImageLoaded = false;
-        let lostImageLoaded = false;
+        wonImage.src = "https://via.placeholder.com/300x150.png?text=Gagn%C3%A9";
+        lostImage.src = "https://via.placeholder.com/300x150.png?text=Perdu";
 
         wonImage.onload = () => {
             console.log("Image 'Gagné' chargée :", wonImage.src);
+            wonImage.width = 300;
+            wonImage.height = 150;
             wonImageLoaded = true;
             if (wonImageLoaded && lostImageLoaded) initGame();
         };
         lostImage.onload = () => {
             console.log("Image 'Perdu' chargée :", lostImage.src);
+            lostImage.width = 300;
+            lostImage.height = 150;
             lostImageLoaded = true;
             if (wonImageLoaded && lostImageLoaded) initGame();
         };
-        wonImage.onerror = () => console.error("Erreur de chargement pour l'image 'Gagné'.");
-        lostImage.onerror = () => console.error("Erreur de chargement pour l'image 'Perdu'.");
+        let wonImageLoaded = false;
+        let lostImageLoaded = false;
 
         function initGame() {
             console.log("Les images sont prêtes. Le jeu commence !");
