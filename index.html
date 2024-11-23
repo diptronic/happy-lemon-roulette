@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnostic - Jeu à Gratter</title>
+    <title>Canvas Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
             padding: 20px;
-            margin: 0;
         }
         canvas {
             margin-top: 20px;
@@ -19,31 +18,22 @@
     </style>
 </head>
 <body>
-    <h1>Diagnostic - Jeu à Gratter</h1>
-    <canvas id="scratchCanvas" width="300" height="150"></canvas>
+    <h1>Test Canvas</h1>
+    <canvas id="testCanvas" width="300" height="150"></canvas>
     <script>
-        const canvas = document.getElementById('scratchCanvas');
+        const canvas = document.getElementById('testCanvas');
         const ctx = canvas.getContext('2d');
 
-        console.log("Canvas initialisé :", canvas);
+        if (ctx) {
+            console.log("Canvas initialisé :", canvas);
 
-        // Test : Dessiner un fond de couleur dans le canvas
-        ctx.fillStyle = "lightblue";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        console.log("Fond bleu dessiné dans le canvas.");
-
-        // Charger une image pour le test
-        const testImage = new Image();
-        testImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // Votre image ici
-
-        testImage.onload = () => {
-            console.log("Image chargée :", testImage.src);
-            ctx.drawImage(testImage, 0, 0, canvas.width, canvas.height);
-        };
-
-        testImage.onerror = () => {
-            console.error("Erreur de chargement de l'image :", testImage.src);
-        };
+            // Dessinons un rectangle bleu
+            ctx.fillStyle = "lightblue";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            console.log("Rectangle bleu dessiné.");
+        } else {
+            console.error("Échec de l'initialisation du canvas.");
+        }
     </script>
 </body>
 </html>
