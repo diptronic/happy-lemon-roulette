@@ -87,9 +87,11 @@
             : "https://i.imgur.com/NyJhyhw.jpeg"; // Image Perdu
 
         backgroundImage.onload = () => {
+            // Dessiner l'image de fond
             ctx.globalCompositeOperation = "source-over";
             ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-            drawMask(); // Dessiner la couche grise
+            // Dessiner la couche grise
+            drawMask();
         };
 
         // Dessiner la couche grise
@@ -128,7 +130,7 @@
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-            // Effacer la couche grise sous la zone grattée
+            // Effacer la couche grise pour révéler l'image
             ctx.globalCompositeOperation = "destination-out";
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
