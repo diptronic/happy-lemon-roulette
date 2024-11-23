@@ -10,6 +10,7 @@
             text-align: center;
             background-color: #fefae0;
             margin: 0;
+            overflow: hidden; /* Empêche le scrolling global */
         }
         .scratch-container {
             position: relative;
@@ -75,8 +76,9 @@
         const resultMessage = document.getElementById('resultMessage');
         const newsletter = document.getElementById('newsletter');
         let isDrawing = false;
+        let isGameCompleted = false;
 
-        // Étape 1 : Charger l'image en arrière-plan
+        // Charger l'image en arrière-plan
         const backgroundImage = new Image();
         backgroundImage.crossOrigin = "anonymous";
         const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
@@ -90,14 +92,14 @@
             drawMask(); // Dessiner la couche grise
         };
 
-        // Étape 2 : Dessiner la couche grise
+        // Dessiner la couche grise
         function drawMask() {
             ctx.globalCompositeOperation = "source-over";
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Étape 3 : Activer le grattage
+        // Activer le grattage
         function activateScratch() {
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mouseup', stopDrawing);
@@ -108,17 +110,19 @@
         }
 
         function startDrawing(e) {
+            if (isGameCompleted) return;
             isDrawing = true;
             scratch(e);
         }
 
         function stopDrawing() {
+            if (isGameCompleted) return;
             isDrawing = false;
             checkCompletion();
         }
 
         function scratch(e) {
-            if (!isDrawing) return;
+            if (!isDrawing || isGameCompleted) return;
 
             const rect = canvas.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -129,9 +133,12 @@
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
             ctx.fill();
+
+            // Empêcher le scrolling
+            e.preventDefault();
         }
 
-        // Étape 4 : Vérifier si 50% de la couche a été grattée
+        // Vérifier si 50% de la couche a été grattée
         function checkCompletion() {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let scratchedPixels = 0;
@@ -146,8 +153,10 @@
             }
         }
 
-        // Étape 5 : Révéler le résultat final
+        // Révéler le résultat
         function revealResult() {
+            if (isGameCompleted) return;
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = "source-over";
             ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
@@ -156,6 +165,7 @@
                 ? "🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !"
                 : "C'est perdu :( Merci de votre participation!";
             newsletter.style.display = 'block';
+            isGameCompleted = true; // Désactiver le grattage
         }
 
         // Initialisation
