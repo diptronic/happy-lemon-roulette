@@ -31,16 +31,16 @@
         bgImage.onload = () => {
             console.log("Image de fond chargée :", bgImage.src);
 
-            // Dessine l'image de fond
+            // Étape 1 : Dessine l'image de fond
             ctx.globalCompositeOperation = "source-over";
             ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
-            // Ajoute la couche à gratter par-dessus l'image
+            // Étape 2 : Dessine la couche grise par-dessus l'image
             ctx.fillStyle = "#ccc";
-            ctx.globalCompositeOperation = "source-over"; // Remet en mode normal
+            ctx.globalCompositeOperation = "source-over"; // Assure que la couche est au-dessus
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Ajoute un texte pour indiquer "Grattez ici"
+            // Étape 3 : Ajoute le texte "Grattez ici"
             ctx.fillStyle = "#000";
             ctx.font = "20px Arial";
             ctx.fillText("Grattez ici", 100, 75);
@@ -72,6 +72,21 @@
 
             function stopDrawing() {
                 isDrawing = false;
+
+                // Vérifie si suffisamment de surface est grattée
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+                let scratchedPixels = 0;
+
+                for (let i = 3; i < pixels.length; i += 4) {
+                    if (pixels[i] === 0) scratchedPixels++;
+                }
+
+                const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
+
+                if (scratchedPercentage > 50) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Révèle toute l'image
+                }
             }
 
             function draw(e) {
@@ -88,6 +103,11 @@
                 ctx.fill();
             }
         }
+
+        // Gestion des erreurs de chargement
+        bgImage.onerror = () => {
+            console.error("Erreur de chargement de l'image :", bgImage.src);
+        };
     </script>
 </body>
 </html>
