@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter HappyLemon France</title>
+    <title>Canvas Test - Minimal</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
             margin: 0;
-            overflow: hidden;
         }
         .scratch-container {
             position: relative;
@@ -22,56 +21,43 @@
         canvas {
             display: block;
             margin: 0 auto;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
     </style>
 </head>
 <body>
-    <h1>Jeu à Gratter HappyLemon France</h1>
+    <h1>Canvas Test - Minimal</h1>
     <div class="scratch-container">
         <canvas id="scratchCanvas" width="350" height="200"></canvas>
     </div>
-    <div id="debugOutput" style="margin-top: 20px; color: red;"></div>
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
+
+        // Étape 1 : Dessiner un fond rouge
+        ctx.fillStyle = "red"; // Couleur de fond
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Étape 2 : Dessiner la couche grise par-dessus
+        ctx.fillStyle = "#ccc"; // Couleur grise
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Variables pour gérer le grattage
         let isDrawing = false;
 
-        // Charger l'image de fond
-        const backgroundImage = new Image();
-        backgroundImage.src = "https://i.imgur.com/kRhG7ix.jpeg"; // Exemple : image gagnante
-        backgroundImage.onload = () => {
-            // Dessiner l'image de fond
-            ctx.globalCompositeOperation = "source-over";
-            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-            // Appliquer la couche grise par-dessus
-            ctx.fillStyle = "#ccc";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            console.log("Image et masque dessinés.");
-        };
-
-        // Événements de grattage
+        // Événements de souris
         canvas.addEventListener('mousedown', () => isDrawing = true);
         canvas.addEventListener('mouseup', () => isDrawing = false);
         canvas.addEventListener('mousemove', scratch);
 
-        canvas.addEventListener('touchstart', (e) => {
-            isDrawing = true;
-            scratch(e);
-        }, { passive: false });
-        canvas.addEventListener('touchend', () => isDrawing = false, { passive: false });
-        canvas.addEventListener('touchmove', scratch, { passive: false });
-
+        // Fonction de grattage
         function scratch(e) {
             if (!isDrawing) return;
 
             const rect = canvas.getBoundingClientRect();
-            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-            // Effacer la couche grise
+            // Effacer la couche grise sous le curseur
             ctx.globalCompositeOperation = "destination-out";
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
