@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roue de la Fortune HappyLemon</title>
+    <title>Jeu Pile ou Face - HappyLemon</title>
     <style>
         body {
             font-family: Candara, Arial, sans-serif;
@@ -18,30 +18,19 @@
             margin-bottom: 20px;
             text-shadow: 2px 2px #ffd700;
         }
-        .wheel-container {
-            position: relative;
+        .coin {
             margin: 20px auto;
-            width: 300px;
-            height: 300px;
-        }
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-            border: 5px solid #ffcc00;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
+            background-color: #ffcc00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #8B4513;
+            font-weight: bold;
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        .pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 20px solid red;
         }
         button {
             margin-top: 20px;
@@ -93,12 +82,9 @@
     </style>
 </head>
 <body>
-    <h1>Roue de la Fortune HappyLemon</h1>
-    <div class="wheel-container">
-        <div class="pointer"></div>
-        <canvas id="wheelCanvas" width="300" height="300"></canvas>
-    </div>
-    <button id="spinButton">Lancer la Roue</button>
+    <h1>Jeu Pile ou Face - HappyLemon</h1>
+    <div class="coin" id="coin">?</div>
+    <button id="flipButton">Lancer la Pièce</button>
     <div class="overlay" id="overlay"></div>
     <div class="result-modal" id="resultModal">
         <img id="resultImage" src="" alt="Résultat">
@@ -106,9 +92,8 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('wheelCanvas');
-        const ctx = canvas.getContext('2d');
-        const spinButton = document.getElementById('spinButton');
+        const coin = document.getElementById('coin');
+        const flipButton = document.getElementById('flipButton');
         const resultImage = document.getElementById('resultImage');
         const resultMessage = document.getElementById('resultMessage');
         const resultModal = document.getElementById('resultModal');
@@ -117,83 +102,35 @@
         const gagneImage = "https://i.imgur.com/kRhG7ix.jpeg";
         const perduImage = "https://i.imgur.com/NyJhyhw.jpeg";
 
-        const sections = ["GAGNÉ", "PERDU", "PERDU", "PERDU", "PERDU", "PERDU"];
-        const colors = ["#ffd700", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3", "#d3d3d3"];
-        const anglePerSection = 360 / sections.length;
+        flipButton.addEventListener('click', () => {
+            flipButton.disabled = true;
 
-        let isSpinning = false;
-
-        // Dessiner la roue
-        function drawWheel() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = canvas.width / 2;
-
-            for (let i = 0; i < sections.length; i++) {
-                const startAngle = (i * anglePerSection * Math.PI) / 180;
-                const endAngle = ((i + 1) * anglePerSection * Math.PI) / 180;
-
-                // Dessiner la section
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-                ctx.fillStyle = colors[i];
-                ctx.fill();
-                ctx.stroke();
-
-                // Ajouter le texte
-                const textAngle = startAngle + (endAngle - startAngle) / 2;
-                const textX = centerX + Math.cos(textAngle) * (radius * 0.6);
-                const textY = centerY + Math.sin(textAngle) * (radius * 0.6);
-                ctx.save();
-                ctx.translate(textX, textY);
-                ctx.rotate(textAngle + Math.PI / 2);
-                ctx.fillStyle = "#8B4513";
-                ctx.font = "16px Candara";
-                ctx.textAlign = "center";
-                ctx.fillText(sections[i], 0, 0);
-                ctx.restore();
-            }
-        }
-
-        drawWheel();
-
-        // Lancer la roue
-        spinButton.addEventListener('click', () => {
-            if (isSpinning) return;
-
-            isSpinning = true;
-            spinButton.disabled = true;
-
-            const rotation = Math.floor(Math.random() * 360) + 360 * 3;
-            canvas.style.transition = "transform 3s ease-out";
-            canvas.style.transform = `rotate(${rotation}deg)`;
-
+            coin.textContent = "Lancement...";
             setTimeout(() => {
-                const finalDegree = (rotation % 360 + anglePerSection / 2) % 360; // Ajustement pour pointer correctement
-                const sectionIndex = Math.floor(finalDegree / anglePerSection);
-                const result = sections[sectionIndex];
-
-                let resultData = {};
-                if (result === "GAGNÉ") {
-                    resultData = {
+                const chance = Math.random();
+                let result = {};
+                if (chance < 0.15) {
+                    // Gagné avec 15 % de chances
+                    result = {
                         message: "🎉 Félicitations, vous avez gagné !",
                         image: gagneImage,
                     };
+                    coin.textContent = "GAGNÉ";
                 } else {
-                    resultData = {
+                    // Perdu
+                    result = {
                         message: "😔 C'est perdu, retentez votre chance !",
                         image: perduImage,
                     };
+                    coin.textContent = "PERDU";
                 }
 
-                resultMessage.textContent = resultData.message;
-                resultImage.src = resultData.image;
+                resultMessage.textContent = result.message;
+                resultImage.src = result.image;
                 overlay.style.display = "block";
                 resultModal.style.display = "block";
-
-                isSpinning = false;
-            }, 3000);
+                flipButton.disabled = false;
+            }, 1000);
         });
 
         // Fermer la modale
@@ -204,4 +141,3 @@
     </script>
 </body>
 </html>
-
