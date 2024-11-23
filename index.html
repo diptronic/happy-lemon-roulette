@@ -29,8 +29,8 @@
         const lostImage = new Image();
         wonImage.crossOrigin = "anonymous";
         lostImage.crossOrigin = "anonymous";
-        wonImage.src = "https://imgur.com/kRhG7ix.jpg"; // Image "Gagné"
-        lostImage.src = "https://imgur.com/NyJhyhw.jpg"; // Image "Perdu"
+        wonImage.src = "https://i.imgur.com/kRhG7ix.jpeg"; // Image "Gagné"
+        lostImage.src = "https://i.imgur.com/NyJhyhw.jpeg"; // Image "Perdu"
 
         // Choisir aléatoirement l'image à révéler
         const isWinner = Math.random() < 0.15; // 15 % de chances de gagner
@@ -78,7 +78,6 @@
                 const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
                 const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-                // Appliquer l'effet de grattage
                 ctx.globalCompositeOperation = "destination-out";
                 ctx.beginPath();
                 ctx.arc(x, y, 20, 0, Math.PI * 2, false);
