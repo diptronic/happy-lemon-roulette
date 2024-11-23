@@ -11,6 +11,7 @@
             background-color: #fefae0; /* Fond jaune citron */
             padding: 20px;
             margin: 0;
+            overflow: hidden; /* Empêche le scrolling global */
         }
         canvas {
             margin: 20px auto;
@@ -48,13 +49,21 @@
             ctx.font = "20px Arial";
             ctx.fillText("Grattez ici", 100, 75);
 
+            // Empêche le scrolling avec le doigt
+            canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+            canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
             // Événements de grattage
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', stopDrawing);
             canvas.addEventListener('mouseleave', stopDrawing);
 
-            function startDrawing() {
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDrawing);
+
+            function startDrawing(e) {
                 isDrawing = true;
             }
 
