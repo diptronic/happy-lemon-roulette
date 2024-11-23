@@ -13,24 +13,51 @@
             padding: 20px;
         }
         h1 {
-            font-size: 32px;
+            font-size: 36px;
             color: #8B4513;
             margin-bottom: 20px;
-            text-shadow: 2px 2px #ffd700;
+            text-shadow: 3px 3px #ffd700, -2px -2px #f4e2a6;
+            font-weight: bold;
         }
-        .coin {
+        .coin-container {
             margin: 20px auto;
             width: 150px;
             height: 150px;
+            perspective: 1000px;
+        }
+        .coin {
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            background-color: #ffcc00;
+            background: linear-gradient(145deg, #ffcc00, #e6b800);
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 24px;
             color: #8B4513;
             font-weight: bold;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-in-out;
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .coin.show-back {
+            transform: rotateY(180deg);
+        }
+        .coin-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .coin-front {
+            background: #ffcc00;
+        }
+        .coin-back {
+            background: #d3d3d3;
+            transform: rotateY(180deg);
         }
         button {
             margin-top: 20px;
@@ -48,95 +75,71 @@
             background-color: grey;
             cursor: not-allowed;
         }
-        .result-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 400px;
-            background-color: white;
+        #emailForm {
+            display: none;
+            margin-top: 20px;
+        }
+        input[type="email"] {
+            padding: 10px;
             border: 2px solid #ffcc00;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        .result-modal img {
-            width: 100%;
-            height: auto;
             border-radius: 5px;
+            font-size: 16px;
+            margin-right: 10px;
         }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #ffcc00;
+            color: #8B4513;
+            border: 2px solid #8B4513;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <h1>Jeu Pile ou Face - HappyLemon</h1>
-    <div class="coin" id="coin">?</div>
-    <button id="flipButton">Lancer la Pièce</button>
-    <div class="overlay" id="overlay"></div>
-    <div class="result-modal" id="resultModal">
-        <img id="resultImage" src="" alt="Résultat">
-        <p id="resultMessage" style="margin-top: 10px; font-size: 18px;"></p>
+    <div class="coin-container">
+        <div class="coin" id="coin">
+            <div class="coin-face coin-front">?</div>
+            <div class="coin-face coin-back">?</div>
+        </div>
     </div>
+    <button id="flipButton">Lancer la Pièce</button>
+    <form id="emailForm" action="https://formspree.io/f/xjkvolea" method="POST">
+        <p>Recevez nos nouveautés et promotions :</p>
+        <input type="email" name="email" placeholder="Votre email" required>
+        <input type="submit" value="S'inscrire">
+    </form>
 
     <script>
         const coin = document.getElementById('coin');
         const flipButton = document.getElementById('flipButton');
-        const resultImage = document.getElementById('resultImage');
-        const resultMessage = document.getElementById('resultMessage');
-        const resultModal = document.getElementById('resultModal');
-        const overlay = document.getElementById('overlay');
-
-        const gagneImage = "https://i.imgur.com/kRhG7ix.jpeg";
-        const perduImage = "https://i.imgur.com/NyJhyhw.jpeg";
+        const emailForm = document.getElementById('emailForm');
 
         flipButton.addEventListener('click', () => {
             flipButton.disabled = true;
 
-            coin.textContent = "Lancement...";
+            // Début de l'animation de la pièce
+            const isWin = Math.random() < 0.15; // 15% de chances de gagner
+            coin.classList.remove("show-back");
             setTimeout(() => {
-                const chance = Math.random();
-                let result = {};
-                if (chance < 0.15) {
-                    // Gagné avec 15 % de chances
-                    result = {
-                        message: "🎉 Félicitations, vous avez gagné !",
-                        image: gagneImage,
-                    };
-                    coin.textContent = "GAGNÉ";
+                if (isWin) {
+                    coin.querySelector('.coin-back').textContent = "GAGNÉ";
+                    coin.classList.add("show-back");
+                    setTimeout(() => {
+                        alert("🎉 Félicitations, vous avez gagné !");
+                        emailForm.style.display = "block";
+                    }, 1000);
                 } else {
-                    // Perdu
-                    result = {
-                        message: "😔 C'est perdu, retentez votre chance !",
-                        image: perduImage,
-                    };
-                    coin.textContent = "PERDU";
+                    coin.querySelector('.coin-back').textContent = "PERDU";
+                    coin.classList.add("show-back");
+                    setTimeout(() => {
+                        alert("😔 C'est perdu, retentez votre chance !");
+                        emailForm.style.display = "block";
+                    }, 1000);
                 }
-
-                resultMessage.textContent = result.message;
-                resultImage.src = result.image;
-                overlay.style.display = "block";
-                resultModal.style.display = "block";
-                flipButton.disabled = false;
-            }, 1000);
-        });
-
-        // Fermer la modale
-        overlay.addEventListener('click', () => {
-            overlay.style.display = "none";
-            resultModal.style.display = "none";
+            }, 500);
         });
     </script>
 </body>
