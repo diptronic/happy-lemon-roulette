@@ -30,41 +30,52 @@
             border-radius: 50%;
             border: 5px solid #ffcc00;
             background: conic-gradient(
-                white 0deg 60deg,
-                #d3d3d3 60deg 120deg,
-                white 120deg 180deg,
-                #d3d3d3 180deg 240deg,
-                white 240deg 300deg,
-                #d3d3d3 300deg 360deg
+                #d3d3d3 0deg 60deg,
+                white 60deg 120deg,
+                #d3d3d3 120deg 180deg,
+                white 180deg 240deg,
+                #d3d3d3 240deg 300deg,
+                white 300deg 360deg
             );
             position: relative;
             transform: rotate(0deg);
             transition: transform 3s ease-out;
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
         }
-        .wheel span {
+        .text-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(0deg);
+        }
+        .text-overlay span {
             position: absolute;
             font-size: 16px;
             font-weight: bold;
-            transform-origin: 50% 50%;
+            color: #8B4513;
         }
-        .wheel span:nth-child(1) {
-            transform: rotate(30deg) translate(120px);
+        .text-overlay span:nth-child(1) {
+            transform: rotate(30deg) translate(125px) rotate(-30deg);
         }
-        .wheel span:nth-child(2) {
-            transform: rotate(90deg) translate(120px);
+        .text-overlay span:nth-child(2) {
+            transform: rotate(90deg) translate(125px) rotate(-90deg);
         }
-        .wheel span:nth-child(3) {
-            transform: rotate(150deg) translate(120px);
+        .text-overlay span:nth-child(3) {
+            transform: rotate(150deg) translate(125px) rotate(-150deg);
         }
-        .wheel span:nth-child(4) {
-            transform: rotate(210deg) translate(120px);
+        .text-overlay span:nth-child(4) {
+            transform: rotate(210deg) translate(125px) rotate(-210deg);
         }
-        .wheel span:nth-child(5) {
-            transform: rotate(270deg) translate(120px);
+        .text-overlay span:nth-child(5) {
+            transform: rotate(270deg) translate(125px) rotate(-270deg);
         }
-        .wheel span:nth-child(6) {
-            transform: rotate(330deg) translate(120px);
+        .text-overlay span:nth-child(6) {
+            transform: rotate(330deg) translate(125px) rotate(-330deg);
         }
         .pointer {
             position: absolute;
@@ -131,12 +142,14 @@
     <div class="wheel-container">
         <div class="pointer"></div>
         <div id="wheel" class="wheel">
-            <span>GAGNÉ</span>
-            <span>PERDU</span>
-            <span>PERDU</span>
-            <span>GAGNÉ</span>
-            <span>PERDU</span>
-            <span>GAGNÉ</span>
+            <div class="text-overlay">
+                <span>GAGNÉ</span>
+                <span>PERDU</span>
+                <span>PERDU</span>
+                <span>GAGNÉ</span>
+                <span>PERDU</span>
+                <span>GAGNÉ</span>
+            </div>
         </div>
     </div>
     <button id="spinButton">Lancer la Roue</button>
@@ -192,7 +205,7 @@
                 overlay.style.display = "block";
                 resultModal.style.display = "block";
 
-                isSpinning = false; // Permet de relancer (si nécessaire)
+                isSpinning = false;
             }, 3000);
         });
 
