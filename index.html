@@ -51,31 +51,31 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transform: rotate(0deg);
         }
         .text-overlay span {
             position: absolute;
             font-size: 16px;
             font-weight: bold;
             color: #8B4513;
+            transform-origin: center center;
         }
         .text-overlay span:nth-child(1) {
-            transform: rotate(30deg) translate(125px) rotate(-30deg);
+            transform: rotate(30deg) translate(0, -110px) rotate(-30deg);
         }
         .text-overlay span:nth-child(2) {
-            transform: rotate(90deg) translate(125px) rotate(-90deg);
+            transform: rotate(90deg) translate(0, -110px) rotate(-90deg);
         }
         .text-overlay span:nth-child(3) {
-            transform: rotate(150deg) translate(125px) rotate(-150deg);
+            transform: rotate(150deg) translate(0, -110px) rotate(-150deg);
         }
         .text-overlay span:nth-child(4) {
-            transform: rotate(210deg) translate(125px) rotate(-210deg);
+            transform: rotate(210deg) translate(0, -110px) rotate(-210deg);
         }
         .text-overlay span:nth-child(5) {
-            transform: rotate(270deg) translate(125px) rotate(-270deg);
+            transform: rotate(270deg) translate(0, -110px) rotate(-270deg);
         }
         .text-overlay span:nth-child(6) {
-            transform: rotate(330deg) translate(125px) rotate(-330deg);
+            transform: rotate(330deg) translate(0, -110px) rotate(-330deg);
         }
         .pointer {
             position: absolute;
@@ -172,44 +172,38 @@
         const perduImage = "https://i.imgur.com/NyJhyhw.jpeg";
 
         spinButton.addEventListener('click', () => {
-            if (isSpinning) return; // Empêche de relancer pendant que la roue tourne
+            if (isSpinning) return;
             isSpinning = true;
-            spinButton.disabled = true; // Désactiver le bouton après utilisation
+            spinButton.disabled = true;
 
-            const rotation = Math.floor(Math.random() * 360) + 360 * 3; // Rotation aléatoire + tours complets
+            const rotation = Math.floor(Math.random() * 360) + 360 * 3;
             wheel.style.transform = `rotate(${rotation}deg)`;
 
-            // Détermine le résultat après 3 secondes (durée de l'animation)
             setTimeout(() => {
                 const finalDegree = rotation % 360;
-                const section = Math.floor(finalDegree / 60); // 6 sections égales
+                const section = Math.floor(finalDegree / 60);
 
                 let result = {};
                 if (section === 0 || section === 3 || section === 5) {
-                    // Sections "GAGNÉ"
                     result = {
                         message: "🎉 Félicitations, vous avez gagné !",
                         image: gagneImage,
                     };
                 } else {
-                    // Sections "PERDU"
                     result = {
                         message: "😔 C'est perdu, retentez votre chance !",
                         image: perduImage,
                     };
                 }
 
-                // Afficher le résultat
                 resultMessage.textContent = result.message;
                 resultImage.src = result.image;
                 overlay.style.display = "block";
                 resultModal.style.display = "block";
-
                 isSpinning = false;
             }, 3000);
         });
 
-        // Fermer la modale si on clique sur l'overlay
         overlay.addEventListener('click', () => {
             overlay.style.display = "none";
             resultModal.style.display = "none";
