@@ -3,39 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test de Chargement d'Image</title>
+    <title>Jeu à Gratter - HappyLemon</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #fefae0;
+            background-color: #fefae0; /* Fond jaune citron */
+            padding: 20px;
+            margin: 0;
         }
         canvas {
-            border: 2px solid red;
-            display: block;
             margin: 20px auto;
+            border: 2px solid blue;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Test de Chargement d'Image</h1>
+    <h1>Jeu à Gratter - HappyLemon</h1>
     <canvas id="scratchCanvas" width="300" height="150"></canvas>
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
 
-        console.log("Canvas initialisé :", canvas);
+        const wonImage = new Image();
+        const lostImage = new Image();
 
-        const testImage = new Image();
-        testImage.src = "https://via.placeholder.com/300x150.png?text=Test+Image"; // Image test simple
+        // URLs des images depuis Postimages
+        wonImage.src = "https://i.postimg.cc/NjK8mC40/gagne-hl.jpg"; // Image "Gagné"
+        lostImage.src = "https://i.postimg.cc/FHkc7drd/perdu-hl.jpg"; // Image "Perdu"
 
-        testImage.onload = () => {
-            console.log("Image chargée :", testImage.src);
-            ctx.drawImage(testImage, 0, 0, canvas.width, canvas.height); // Dessine l'image
+        let isDrawing = false;
+
+        // Chargement des images
+        wonImage.onload = lostImage.onload = () => {
+            console.log("Images chargées : Gagné et Perdu");
+
+            // Dessine la surface grattable
+            ctx.fillStyle = "#ccc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Ajoute le texte "Grattez ici"
+            ctx.fillStyle = "#000";
+            ctx.font = "20px Arial";
+            ctx.fillText("Grattez ici", 100, 75);
+
+            // Événements de grattage
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+
+            function startDrawing() {
+                isDrawing = true;
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+
+                // Vérifie si suffisamment de surface est grattée
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+                let scratchedPixels = 0;
+
+                for (let i = 3; i < pixels.length; i += 4) {
+                    if (pixels[i] === 0) scratchedPixels++;
+                }
+
+                const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
+
+                if (scratchedPercentage > 50) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Révèle l'image
+                    const isWinner = Math.random() < 0.15; // 15% de chances de gagner
+                    ctx.drawImage(isWinner ? wonImage : lostImage, 0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+                ctx.globalCompositeOperation = "destination-out"; // Effet de grattage
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+            }
         };
 
-        testImage.onerror = () => {
-            console.error("Erreur de chargement de l'image :", testImage.src);
+        // Gestion des erreurs de chargement
+        wonImage.onerror = () => {
+            console.error("Erreur de chargement de l'image 'Gagné':", wonImage.src);
+        };
+
+        lostImage.onerror = () => {
+            console.error("Erreur de chargement de l'image 'Perdu':", lostImage.src);
         };
     </script>
 </body>
