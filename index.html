@@ -53,23 +53,23 @@
     <script>
         // Initialisation du jeu à gratter
         const scratchCard = new ScratchCard('#scratch-area', {
-            scratchType: SCRATCH_TYPE.CIRCLE,
-            containerWidth: 300,
-            containerHeight: 150,
-            imageForwardSrc: 'https://via.placeholder.com/300x150/cccccc?text=Grattez+ici', // Image à gratter
-            imageBackgroundSrc: 'https://via.placeholder.com/300x150/ffcc00?text=Gagné!', // Image de fond
-            callback: function () {
-                // Probabilité de gagner : 15 %
-                const isWinner = Math.random() < 0.15; 
-                const resultMessage = document.getElementById('result-message');
-                if (isWinner) {
-                    resultMessage.textContent = '🎉 Félicitations, vous avez gagné un topping gratuit !';
-                } else {
-                    resultMessage.textContent = 'Merci pour votre participation ! Bonne chance la prochaine fois !';
-                }
-            },
-        });
-        scratchCard.init();
+    scratchType: SCRATCH_TYPE.CIRCLE,
+    containerWidth: 300,
+    containerHeight: 150,
+    imageForwardSrc: 'https://via.placeholder.com/300x150/cccccc?text=Grattez+ici',
+    imageBackgroundSrc: 'https://via.placeholder.com/300x150/ffcc00?text=Gagné!',
+    callback: function () {
+        const isWinner = Math.random() < 0.15; 
+        const resultMessage = document.getElementById('result-message');
+        if (isWinner) {
+            resultMessage.textContent = '🎉 Félicitations, vous avez gagné un topping gratuit !';
+        } else {
+            resultMessage.textContent = 'Merci pour votre participation !';
+        }
+    },
+});
+scratchCard.init();
+
     </script>
 </body>
 </html>
