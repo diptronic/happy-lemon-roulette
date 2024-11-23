@@ -8,20 +8,19 @@
         body {
             font-family: Candara, Arial, sans-serif;
             text-align: center;
-            background: linear-gradient(120deg, #fff9c4, #fefae0);
+            background-color: #fefae0;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
         h1 {
             font-size: 32px;
             color: #8B4513;
-            margin-top: 20px;
+            margin-bottom: 20px;
             text-shadow: 2px 2px #ffd700;
-            font-weight: bold;
         }
         .wheel-container {
             position: relative;
-            margin: 50px auto;
+            margin: 20px auto;
             width: 300px;
             height: 300px;
         }
@@ -31,48 +30,41 @@
             border-radius: 50%;
             border: 5px solid #ffcc00;
             background: conic-gradient(
-                #f9d423 0% 60deg, 
-                #ff6f61 60deg 120deg, 
-                #f9d423 120deg 180deg, 
-                #ff6f61 180deg 240deg, 
-                #f9d423 240deg 300deg, 
-                #ff6f61 300deg 360deg
+                white 0deg 60deg,
+                #d3d3d3 60deg 120deg,
+                white 120deg 180deg,
+                #d3d3d3 180deg 240deg,
+                white 240deg 300deg,
+                #d3d3d3 300deg 360deg
             );
             position: relative;
             transform: rotate(0deg);
             transition: transform 3s ease-out;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
         }
         .wheel span {
             position: absolute;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            color: #fff;
             transform-origin: 50% 50%;
         }
         .wheel span:nth-child(1) {
-            transform: rotate(30deg) translate(125px);
-            color: #8B4513;
+            transform: rotate(30deg) translate(120px);
         }
         .wheel span:nth-child(2) {
-            transform: rotate(90deg) translate(125px);
-            color: #fff;
+            transform: rotate(90deg) translate(120px);
         }
         .wheel span:nth-child(3) {
-            transform: rotate(150deg) translate(125px);
-            color: #fff;
+            transform: rotate(150deg) translate(120px);
         }
         .wheel span:nth-child(4) {
-            transform: rotate(210deg) translate(125px);
-            color: #8B4513;
+            transform: rotate(210deg) translate(120px);
         }
         .wheel span:nth-child(5) {
-            transform: rotate(270deg) translate(125px);
-            color: #fff;
+            transform: rotate(270deg) translate(120px);
         }
         .wheel span:nth-child(6) {
-            transform: rotate(330deg) translate(125px);
-            color: #fff;
+            transform: rotate(330deg) translate(120px);
         }
         .pointer {
             position: absolute;
@@ -84,7 +76,6 @@
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
             border-bottom: 20px solid red;
-            animation: bounce 1s infinite alternate;
         }
         button {
             margin-top: 20px;
@@ -98,9 +89,9 @@
             cursor: pointer;
             transition: all 0.3s ease-in-out;
         }
-        button:hover {
-            background-color: #8B4513;
-            color: white;
+        button:disabled {
+            background-color: grey;
+            cursor: not-allowed;
         }
         .result-modal {
             position: fixed;
@@ -133,14 +124,6 @@
             z-index: 999;
             display: none;
         }
-        @keyframes bounce {
-            from {
-                transform: translateX(-50%) translateY(0);
-            }
-            to {
-                transform: translateX(-50%) translateY(-10px);
-            }
-        }
     </style>
 </head>
 <body>
@@ -148,12 +131,12 @@
     <div class="wheel-container">
         <div class="pointer"></div>
         <div id="wheel" class="wheel">
-            <span>CADEAU</span>
+            <span>GAGNÉ</span>
             <span>PERDU</span>
             <span>PERDU</span>
-            <span>CADEAU</span>
+            <span>GAGNÉ</span>
             <span>PERDU</span>
-            <span>PERDU</span>
+            <span>GAGNÉ</span>
         </div>
     </div>
     <button id="spinButton">Lancer la Roue</button>
@@ -162,6 +145,62 @@
         <img id="resultImage" src="" alt="Résultat">
         <p id="resultMessage" style="margin-top: 10px; font-size: 18px;"></p>
     </div>
+
+    <script>
+        const wheel = document.getElementById('wheel');
+        const spinButton = document.getElementById('spinButton');
+        const resultImage = document.getElementById('resultImage');
+        const resultMessage = document.getElementById('resultMessage');
+        const resultModal = document.getElementById('resultModal');
+        const overlay = document.getElementById('overlay');
+        let isSpinning = false;
+
+        const gagneImage = "https://i.imgur.com/kRhG7ix.jpeg";
+        const perduImage = "https://i.imgur.com/NyJhyhw.jpeg";
+
+        spinButton.addEventListener('click', () => {
+            if (isSpinning) return; // Empêche de relancer pendant que la roue tourne
+            isSpinning = true;
+            spinButton.disabled = true; // Désactiver le bouton après utilisation
+
+            const rotation = Math.floor(Math.random() * 360) + 360 * 3; // Rotation aléatoire + tours complets
+            wheel.style.transform = `rotate(${rotation}deg)`;
+
+            // Détermine le résultat après 3 secondes (durée de l'animation)
+            setTimeout(() => {
+                const finalDegree = rotation % 360;
+                const section = Math.floor(finalDegree / 60); // 6 sections égales
+
+                let result = {};
+                if (section === 0 || section === 3 || section === 5) {
+                    // Sections "GAGNÉ"
+                    result = {
+                        message: "🎉 Félicitations, vous avez gagné !",
+                        image: gagneImage,
+                    };
+                } else {
+                    // Sections "PERDU"
+                    result = {
+                        message: "😔 C'est perdu, retentez votre chance !",
+                        image: perduImage,
+                    };
+                }
+
+                // Afficher le résultat
+                resultMessage.textContent = result.message;
+                resultImage.src = result.image;
+                overlay.style.display = "block";
+                resultModal.style.display = "block";
+
+                isSpinning = false; // Permet de relancer (si nécessaire)
+            }, 3000);
+        });
+
+        // Fermer la modale si on clique sur l'overlay
+        overlay.addEventListener('click', () => {
+            overlay.style.display = "none";
+            resultModal.style.display = "none";
+        });
+    </script>
 </body>
 </html>
-
