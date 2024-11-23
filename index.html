@@ -27,11 +27,6 @@
             top: 0;
             left: 0;
         }
-        .background-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
     </style>
 </head>
 <body>
@@ -43,9 +38,11 @@
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
+        let isRevealed = false;
 
         // Charger l'image de fond
         const backgroundImage = new Image();
+        backgroundImage.crossOrigin = "anonymous";
         backgroundImage.src = "https://i.imgur.com/kRhG7ix.jpeg"; // Image par défaut
 
         backgroundImage.onload = () => {
@@ -74,16 +71,19 @@
         }
 
         function startDrawing(e) {
+            if (isRevealed) return;
             isDrawing = true;
             scratch(e);
         }
 
         function stopDrawing() {
+            if (isRevealed) return;
             isDrawing = false;
+            checkCompletion(); // Vérifie si 50% de la couche ont été grattés
         }
 
         function scratch(e) {
-            if (!isDrawing) return;
+            if (!isDrawing || isRevealed) return;
 
             const rect = canvas.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -94,6 +94,32 @@
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
             ctx.fill();
+        }
+
+        // Vérifier si 50% de la surface est grattée
+        function checkCompletion() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let scratchedPixels = 0;
+
+            for (let i = 3; i < imageData.data.length; i += 4) {
+                if (imageData.data[i] === 0) scratchedPixels++;
+            }
+
+            const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
+
+            if (scratchedPercentage > 50) { // Seuil de 50%
+                revealImage();
+            }
+        }
+
+        // Révéler l'image
+        function revealImage() {
+            if (isRevealed) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = "source-over";
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            isRevealed = true; // Désactiver le grattage
         }
 
         // Initialisation
