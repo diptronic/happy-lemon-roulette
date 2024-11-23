@@ -37,7 +37,6 @@
 <body>
     <h1>Jeu à Gratter HappyLemon France</h1>
     <div class="scratch-container">
-        <img src="https://i.imgur.com/kRhG7ix.jpeg" class="background-image" alt="Image Gagné">
         <canvas id="scratchCanvas" width="380" height="365"></canvas>
     </div>
     <script>
@@ -112,6 +111,7 @@
 
             const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
 
+            console.log(`Gratté : ${scratchedPercentage.toFixed(2)}%`);
             if (scratchedPercentage > 50) { // Seuil de 50%
                 revealImage();
             }
@@ -133,4 +133,3 @@
     </script>
 </body>
 </html>
-
