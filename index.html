@@ -15,10 +15,38 @@
             background-color: #fefae0;
             margin: 0;
         }
+        h1 {
+            font-family: 'Candara', Arial, sans-serif;
+            font-size: 2.5em;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(90deg, #FFD700, #ADFF2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 10px;
+            border: 2px solid #ADFF2F;
+            border-radius: 10px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 1);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            }
+        }
         .scratch-container {
             position: relative;
-            width: 370px;
-            height: 250px;
+            width: 350px;
+            height: 200px;
             margin: 20px auto;
             border: 2px solid green;
         }
@@ -37,6 +65,29 @@
             margin-top: 20px;
             color: #333;
         }
+        .newsletter {
+            font-family: 'Candara', Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .newsletter input[type="email"] {
+            padding: 10px;
+            width: 70%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .newsletter button {
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .newsletter button:hover {
+            background-color: darkgreen;
+        }
     </style>
 </head>
 <body>
@@ -44,15 +95,25 @@
     <div class="scratch-container">
         <img src="https://i.imgur.com/kRhG7ix.jpeg" class="background-image" id="winImage" alt="Image Gagné" style="display: none;">
         <img src="https://i.imgur.com/NyJhyhw.jpeg" class="background-image" id="loseImage" alt="Image Perdu" style="display: none;">
-        <canvas id="scratchCanvas" width="370" height="250"></canvas>
+        <canvas id="scratchCanvas" width="350" height="200"></canvas>
     </div>
     <div class="message" id="resultMessage"></div>
+    <div class="newsletter" id="newsletter" style="display: none;">
+        <h2>Inscrivez-vous à notre newsletter</h2>
+        <p>Recevez des offres exclusives et les dernières nouveautés !</p>
+        <form action="https://formspree.io/f/xjkvolea" method="POST">
+            <label for="email">Votre email :</label><br>
+            <input type="email" id="email" name="email" placeholder="Votre email" required>
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
         const resultMessage = document.getElementById('resultMessage');
         const winImage = document.getElementById('winImage');
         const loseImage = document.getElementById('loseImage');
+        const newsletter = document.getElementById('newsletter');
 
         let isDrawing = false;
         let totalScratched = 0;
@@ -61,7 +122,7 @@
 
         // Vérifier si le joueur a déjà joué
         if (localStorage.getItem(gamePlayedKey)) {
-            resultMessage.textContent = "Vous avez déjà joué. Merci de laisser un nouvel avis pour retenter votre chance !";
+            resultMessage.textContent = "Vous avez déjà joué. Merci de laisser un nouvel avis pour retenter votre chance !";
             canvas.style.display = "none";
             return;
         }
@@ -129,15 +190,23 @@
 
             // Déterminer le résultat
             const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
-            const reward = Math.random() < 0.7 ? "un topping gratuit !" : "10% de réduction sur un prochain achat !";
 
+            const backgroundImage = new Image();
             if (isWinner) {
-                winImage.style.display = "block";
-                resultMessage.textContent = `🎉 Félicitations, vous avez gagné ${reward}`;
+                backgroundImage.src = "https://i.imgur.com/kRhG7ix.jpeg"; // Image gagnante
+                resultMessage.textContent = `🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !`;
             } else {
-                loseImage.style.display = "block";
-                resultMessage.textContent = "C'est perdu :( Merci de votre participation.";
+                backgroundImage.src = "https://i.imgur.com/NyJhyhw.jpeg"; // Image perdante
+                resultMessage.textContent = "C'est perdu :( Merci de votre participation!";
             }
+
+            // Afficher l'image sur le canvas
+            backgroundImage.onload = () => {
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            };
+
+            // Afficher le formulaire de newsletter
+            newsletter.style.display = 'block';
 
             // Marquer le jeu comme joué
             localStorage.setItem(gamePlayedKey, 'true');
