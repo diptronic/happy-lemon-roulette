@@ -17,8 +17,8 @@
         }
         .scratch-container {
             position: relative;
-            width: 350px;
-            height: 270px;
+            width: 380px;
+            height: 365px;
             margin: 20px auto;
             border: 2px solid green;
         }
@@ -27,12 +27,18 @@
             top: 0;
             left: 0;
         }
+        .background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
     <h1>Jeu à Gratter HappyLemon France</h1>
     <div class="scratch-container">
-        <canvas id="scratchCanvas" width="350" height="270"></canvas>
+        <img src="https://i.imgur.com/kRhG7ix.jpeg" class="background-image" alt="Image Gagné">
+        <canvas id="scratchCanvas" width="380" height="365"></canvas>
     </div>
     <script>
         const canvas = document.getElementById('scratchCanvas');
@@ -42,7 +48,6 @@
 
         // Charger l'image de fond
         const backgroundImage = new Image();
-        backgroundImage.crossOrigin = "anonymous";
         backgroundImage.src = "https://i.imgur.com/kRhG7ix.jpeg"; // Image par défaut
 
         backgroundImage.onload = () => {
@@ -123,7 +128,9 @@
         }
 
         // Initialisation
+        drawMask(); // Dessiner la couche grise
         activateScratch(); // Activer le grattage
     </script>
 </body>
 </html>
+
