@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Image de Fond</title>
+    <title>Test Couche Grise</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,13 +12,13 @@
         }
         canvas {
             margin: 20px auto;
-            border: 2px solid red;
+            border: 2px solid green;
             display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Test Image de Fond</h1>
+    <h1>Test Couche Grise</h1>
     <canvas id="testCanvas" width="380" height="365"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
@@ -30,7 +30,14 @@
 
         bgImage.onload = () => {
             console.log("Image chargée :", bgImage.src);
+
+            // Étape 1 : Dessiner l'image de fond
+            ctx.globalCompositeOperation = "source-over";
             ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+
+            // Étape 2 : Ajouter une couche grise par-dessus
+            ctx.fillStyle = "#ccc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         };
 
         bgImage.onerror = () => {
