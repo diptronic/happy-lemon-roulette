@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Couche Grise</title>
+    <title>Test Grattage Simplifié</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,13 +12,13 @@
         }
         canvas {
             margin: 20px auto;
-            border: 2px solid blue;
+            border: 2px solid green;
             display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Test Couche Grise</h1>
+    <h1>Test Grattage Simplifié</h1>
     <canvas id="testCanvas" width="300" height="150"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
@@ -32,7 +32,31 @@
             ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height); // Dessine l'image
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height); // Ajoute la couche grise
+
+            // Activer le grattage
+            activateScratch();
         };
+
+        function activateScratch() {
+            let isDrawing = false;
+
+            canvas.addEventListener('mousedown', () => (isDrawing = true));
+            canvas.addEventListener('mouseup', () => (isDrawing = false));
+            canvas.addEventListener('mousemove', (e) => draw(e));
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                ctx.globalCompositeOperation = "destination-out";
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+            }
+        }
 
         bgImage.onerror = () => {
             console.error("Erreur de chargement de l'image :", bgImage.src);
