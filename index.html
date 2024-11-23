@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Canvas Réponse</title>
+    <title>Test Grattage Fonctionnel</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,27 +12,56 @@
         }
         canvas {
             margin: 20px auto;
-            border: 2px solid blue;
+            border: 2px solid green;
             display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Test Canvas Réponse</h1>
+    <h1>Test Grattage Fonctionnel</h1>
     <canvas id="testCanvas" width="380" height="365"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Ajout d'un événement pour tester le dessin
-        canvas.addEventListener('mousedown', () => {
-            console.log("Canvas cliqué - Réponse détectée.");
-            // Dessine un cercle rouge où l'utilisateur clique
-            ctx.fillStyle = "red";
-            ctx.beginPath();
-            ctx.arc(190, 182, 50, 0, Math.PI * 2, false);
-            ctx.fill();
-        });
+        // Étape 1 : Remplir le fond en rouge
+        ctx.fillStyle = "red";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Étape 2 : Ajouter une couche grise par-dessus
+        ctx.fillStyle = "#ccc";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Étape 3 : Activer le grattage
+        activateScratch();
+
+        function activateScratch() {
+            let isDrawing = false;
+
+            // Ajouter des événements
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mousemove', draw);
+
+            function startDrawing() {
+                isDrawing = true;
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Effacer la couche grise en dessinant des carrés transparents
+                ctx.clearRect(x - 10, y - 10, 20, 20);
+            }
+        }
     </script>
 </body>
 </html>
