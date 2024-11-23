@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Minimaliste</title>
+    <title>Test Ordre de Dessin</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,22 +18,27 @@
     </style>
 </head>
 <body>
-    <h1>Test Minimaliste</h1>
+    <h1>Test Ordre de Dessin</h1>
     <canvas id="testCanvas" width="380" height="365"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Étape 1 : Couleur de fond
+        // Étape 1 : Dessiner le fond rouge
         ctx.fillStyle = "red";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        console.log("Fond rouge dessiné");
 
-        // Étape 2 : Couche grise
-        ctx.fillStyle = "#ccc";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Ajouter un délai pour confirmer le dessin
+        setTimeout(() => {
+            // Étape 2 : Ajouter une couche grise par-dessus
+            ctx.fillStyle = "#ccc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            console.log("Couche grise ajoutée");
 
-        // Test d'effacement
-        ctx.clearRect(50, 50, 100, 100); // Efface un carré au centre du canvas
+            // Étape 3 : Effacer un carré au centre
+            ctx.clearRect(50, 50, 100, 100); // Devrait révéler le rouge
+        }, 1000); // Pause de 1 seconde pour voir le rouge
     </script>
 </body>
 </html>
