@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Ordre de Dessin</title>
+    <title>Test Redessin Dynamique</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,33 +12,69 @@
         }
         canvas {
             margin: 20px auto;
-            border: 2px solid red;
+            border: 2px solid green;
             display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Test Ordre de Dessin</h1>
+    <h1>Test Redessin Dynamique</h1>
     <canvas id="testCanvas" width="380" height="365"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Étape 1 : Dessiner le fond rouge
-        ctx.fillStyle = "red";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        console.log("Fond rouge dessiné");
+        // Variables pour la gestion du grattage
+        let isDrawing = false;
+        let maskImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        // Ajouter un délai pour confirmer le dessin
-        setTimeout(() => {
-            // Étape 2 : Ajouter une couche grise par-dessus
+        // Étape 1 : Dessiner la couche rouge
+        function drawBackground() {
+            ctx.fillStyle = "red";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Étape 2 : Ajouter la couche grise
+        function drawMask() {
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            console.log("Couche grise ajoutée");
+            maskImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
 
-            // Étape 3 : Effacer un carré au centre
-            ctx.clearRect(50, 50, 100, 100); // Devrait révéler le rouge
-        }, 1000); // Pause de 1 seconde pour voir le rouge
+        // Étape 3 : Activer le grattage
+        function activateScratch() {
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mousemove', draw);
+
+            function startDrawing() {
+                isDrawing = true;
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Efface une partie de la couche grise
+                ctx.putImageData(maskImage, 0, 0);
+                ctx.clearRect(x - 10, y - 10, 20, 20);
+
+                // Redessine la couche rouge
+                drawBackground();
+            }
+        }
+
+        // Initialisation
+        drawBackground(); // Couche rouge
+        drawMask(); // Couche grise
+        activateScratch(); // Grattage
     </script>
 </body>
 </html>
