@@ -3,36 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas Test</title>
+    <title>Test du Canvas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
-            padding: 20px;
         }
         canvas {
-            margin-top: 20px;
-            border: 2px solid #ffcc00;
+            border: 2px solid red;
+            display: block;
+            margin: 20px auto;
         }
     </style>
 </head>
 <body>
-    <h1>Test Canvas</h1>
-    <canvas id="testCanvas" width="300" height="150"></canvas>
+    <h1>Test du Contexte Canvas</h1>
+    <canvas id="scratchCanvas" width="300" height="150"></canvas>
     <script>
-        const canvas = document.getElementById('testCanvas');
-        const ctx = canvas.getContext('2d');
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d'); // Initialise le contexte 2D
 
         if (ctx) {
-            console.log("Canvas initialisé :", canvas);
+            console.log("Contexte 2D initialisé :", ctx);
 
-            // Dessinons un rectangle bleu
+            // Dessin simple pour tester
             ctx.fillStyle = "lightblue";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            console.log("Rectangle bleu dessiné.");
+            ctx.fillRect(0, 0, canvas.width, canvas.height); // Rectangle bleu
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Canvas OK", 100, 75); // Texte noir au centre
         } else {
-            console.error("Échec de l'initialisation du canvas.");
+            console.error("Le contexte 2D n'a pas pu être initialisé.");
         }
     </script>
 </body>
