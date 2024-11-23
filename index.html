@@ -120,24 +120,27 @@
         const emailForm = document.getElementById('emailForm');
 
         flipButton.addEventListener('click', () => {
-            flipButton.disabled = true;
+            flipButton.disabled = true; // Désactiver le bouton après un clic
 
             // Début de l'animation de la pièce
             const isWin = Math.random() < 0.15; // 15% de chances de gagner
             coin.classList.remove("show-back");
             setTimeout(() => {
                 if (isWin) {
+                    // Gagné : choisir le gain spécifique
+                    const gainType = Math.random() < 0.75 ? "Un topping gratuit" : "10% de réduction";
                     coin.querySelector('.coin-back').textContent = "GAGNÉ";
                     coin.classList.add("show-back");
                     setTimeout(() => {
-                        alert("🎉 Félicitations, vous avez gagné !");
+                        alert(`🎉 Félicitations, vous avez gagné : ${gainType} !`);
                         emailForm.style.display = "block";
                     }, 1000);
                 } else {
+                    // Perdu
                     coin.querySelector('.coin-back').textContent = "PERDU";
                     coin.classList.add("show-back");
                     setTimeout(() => {
-                        alert("😔 C'est perdu, retentez votre chance !");
+                        alert("😔 C'est perdu, merci pour votre avis sur Google !");
                         emailForm.style.display = "block";
                     }, 1000);
                 }
