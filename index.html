@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Grattage - Couleur de Fond</title>
+    <title>Test Grattage Simplifié</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,13 +18,13 @@
     </style>
 </head>
 <body>
-    <h1>Test Grattage - Couleur de Fond</h1>
+    <h1>Test Grattage Simplifié</h1>
     <canvas id="testCanvas" width="380" height="365"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Étape 1 : Remplir le fond d'une couleur visible
+        // Étape 1 : Remplir le fond d'une couleur rouge
         ctx.fillStyle = "red";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -32,7 +32,7 @@
         ctx.fillStyle = "#ccc";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Étape 3 : Activer le grattage
+        // Étape 3 : Activer le grattage (simple effacement)
         activateScratch();
 
         function activateScratch() {
@@ -58,11 +58,8 @@
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
 
-                // Appliquer l'effet de grattage
-                ctx.globalCompositeOperation = "destination-out";
-                ctx.beginPath();
-                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
-                ctx.fill();
+                // Effacer directement une partie de la couche grise
+                ctx.clearRect(x - 10, y - 10, 20, 20);
             }
         }
     </script>
