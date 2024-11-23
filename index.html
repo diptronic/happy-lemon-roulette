@@ -21,12 +21,9 @@
             background-color: #fff;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            color: #ffcc00; /* Couleur HappyLemon */
-        }
         canvas {
             margin: 20px auto;
-            border: 2px solid #ffcc00; /* Bordure jaune */
+            border: 2px solid #ffcc00;
             display: block;
         }
         .message {
@@ -39,46 +36,47 @@
 <body>
     <div class="container">
         <h1>Jeu à Gratter - HappyLemon</h1>
-        <p>Grattez pour découvrir si vous avez gagné !</p>
         <canvas id="scratchCanvas" width="300" height="150"></canvas>
-        <div class="message" id="result-message"></div>
+        <div id="result-message"></div>
     </div>
 
     <script>
-        // Initialisation du jeu à gratter
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
         const resultMessage = document.getElementById('result-message');
 
-        // Dessine la couche à gratter
-        ctx.fillStyle = "#ccc"; // Couleur de la surface grattable
+        // Dessine la surface grattable
+        ctx.fillStyle = "#ccc";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Ajoute le texte "Grattez ici"
         ctx.fillStyle = "#000";
         ctx.font = "20px Arial";
         ctx.fillText("Grattez ici", canvas.width / 2 - 50, canvas.height / 2);
 
-        // Charge les images pour "Gagné" et "Perdu"
+        // Charge les images
         const wonImage = new Image();
         const lostImage = new Image();
-        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // Image "Gagné"
-        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/perdu_hl.jpg"; // Image "Perdu"
+
+        wonImage.src = "https://i.postimg.cc/NjK8mC40/gagne-hl.jpg"; // Image "Gagné"
+        lostImage.src = "https://i.postimg.cc/FHkc7drd/perdu-hl.jpg"; // Image "Perdu"
 
         let wonImageLoaded = false;
         let lostImageLoaded = false;
 
-        // Charge les images et initialise le jeu lorsque les deux sont prêtes
         wonImage.onload = () => {
+            console.log("Image 'Gagné' chargée :", wonImage.src);
             wonImageLoaded = true;
             if (wonImageLoaded && lostImageLoaded) initGame();
         };
         lostImage.onload = () => {
+            console.log("Image 'Perdu' chargée :", lostImage.src);
             lostImageLoaded = true;
             if (wonImageLoaded && lostImageLoaded) initGame();
         };
+        wonImage.onerror = () => console.error("Erreur de chargement pour l'image 'Gagné'.");
+        lostImage.onerror = () => console.error("Erreur de chargement pour l'image 'Perdu'.");
 
         function initGame() {
+            console.log("Les images sont prêtes. Le jeu commence !");
             let isDrawing = false;
 
             canvas.addEventListener('mousedown', startDrawing);
@@ -97,20 +95,19 @@
             function stopDrawing() {
                 isDrawing = false;
 
-                // Vérifie si 50% de la surface est grattée
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const pixels = imageData.data;
                 let scratchedPixels = 0;
 
                 for (let i = 3; i < pixels.length; i += 4) {
-                    if (pixels[i] === 0) scratchedPixels++; // Pixel transparent
+                    if (pixels[i] === 0) scratchedPixels++;
                 }
 
                 const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
 
                 if (scratchedPercentage > 50) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Révèle toute la surface
-                    const isWinner = Math.random() < 0.15; // 15 % de chances de gagner
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    const isWinner = Math.random() < 0.15;
                     ctx.drawImage(isWinner ? wonImage : lostImage, 0, 0, canvas.width, canvas.height);
                     resultMessage.textContent = isWinner
                         ? "🎉 Félicitations, vous avez gagné !"
