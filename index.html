@@ -3,43 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test d'Image + Couche Grise</title>
+    <title>Test Chargement d'Image</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
         }
-        canvas {
+        img {
             margin: 20px auto;
-            border: 2px solid red;
             display: block;
+            border: 2px solid red;
         }
     </style>
 </head>
 <body>
-    <h1>Test d'Image + Couche Grise</h1>
-    <canvas id="testCanvas" width="300" height="150"></canvas>
+    <h1>Test Chargement d'Image</h1>
+    <img id="testImage" src="https://i.postimg.cc/NjK8mC40/gagne-hl.jpg" alt="Test Image">
     <script>
-        const canvas = document.getElementById('testCanvas');
-        const ctx = canvas.getContext('2d');
+        const testImage = document.getElementById('testImage');
 
-        const bgImage = new Image();
-        bgImage.src = "https://i.postimg.cc/NjK8mC40/gagne-hl.jpg"; // Image "Gagné"
-
-        bgImage.onload = () => {
-            console.log("Image chargée :", bgImage.src);
-
-            // Étape 1 : Dessine l'image de fond
-            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-
-            // Étape 2 : Ajoute une couche grise par-dessus
-            ctx.fillStyle = "#ccc";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        testImage.onload = () => {
+            console.log("Image chargée avec succès :", testImage.src);
         };
 
-        bgImage.onerror = () => {
-            console.error("Erreur de chargement de l'image :", bgImage.src);
+        testImage.onerror = () => {
+            console.error("Erreur de chargement de l'image :", testImage.src);
         };
     </script>
 </body>
