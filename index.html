@@ -20,10 +20,8 @@
             border: 2px solid green;
         }
         canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 2;
+            display: block;
+            margin: 0 auto;
         }
         .message {
             font-size: 20px;
@@ -88,16 +86,15 @@
 
         backgroundImage.onload = () => {
             // Dessiner l'image de fond
-            ctx.globalCompositeOperation = "source-over";
             ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-            // Dessiner la couche grise
+            // Appliquer la couche grise
             drawMask();
         };
 
         // Dessiner la couche grise
         function drawMask() {
             ctx.globalCompositeOperation = "source-over";
-            ctx.fillStyle = "#ccc"; // Couleur grise
+            ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
@@ -167,7 +164,7 @@
                 ? "🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !"
                 : "C'est perdu :( Merci de votre participation!";
             newsletter.style.display = 'block';
-            isGameCompleted = true; // Désactiver le grattage
+            isGameCompleted = true;
         }
 
         // Initialisation
