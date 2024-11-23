@@ -22,11 +22,16 @@
             position: absolute;
             top: 0;
             left: 0;
+            z-index: 2; /* Le canvas est au-dessus de l'image */
         }
         .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
+            z-index: 1; /* L'image est derrière le canvas */
         }
         .message {
             font-size: 20px;
@@ -61,6 +66,8 @@
 <body>
     <h1>Jeu à Gratter HappyLemon France</h1>
     <div class="scratch-container">
+        <img src="https://i.imgur.com/kRhG7ix.jpeg" id="winImage" class="background-image" alt="Image Gagné" style="display: none;">
+        <img src="https://i.imgur.com/NyJhyhw.jpeg" id="loseImage" class="background-image" alt="Image Perdu" style="display: none;">
         <canvas id="scratchCanvas" width="350" height="200"></canvas>
     </div>
     <div class="message" id="resultMessage"></div>
@@ -76,6 +83,8 @@
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
+        const winImage = document.getElementById('winImage');
+        const loseImage = document.getElementById('loseImage');
         const resultMessage = document.getElementById('resultMessage');
         const newsletter = document.getElementById('newsletter');
         let isDrawing = false;
@@ -121,7 +130,6 @@
         }
 
         function checkCompletion() {
-            // Vérifier si 50% de la surface a été grattée
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let scratchedPixels = 0;
 
@@ -138,18 +146,19 @@
         function revealResult() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Déterminer le résultat
-            const isWinner = Math.random() < 0.13;
-            const image = new Image();
-            image.src = isWinner ? "https://i.imgur.com/kRhG7ix.jpeg" : "https://i.imgur.com/NyJhyhw.jpeg";
+            const isWinner = Math.random() < 0.13; // 13% de chances de gagner
 
-            image.onload = () => {
-                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-                resultMessage.textContent = isWinner
-                    ? "🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !"
-                    : "C'est perdu :( Merci de votre participation!";
-                newsletter.style.display = 'block';
-            };
+            if (isWinner) {
+                winImage.style.display = "block";
+                loseImage.style.display = "none";
+                resultMessage.textContent = "🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !";
+            } else {
+                loseImage.style.display = "block";
+                winImage.style.display = "none";
+                resultMessage.textContent = "C'est perdu :( Merci de votre participation!";
+            }
+
+            newsletter.style.display = 'block';
         }
 
         // Initialisation
