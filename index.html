@@ -30,10 +30,10 @@
             border-radius: 50%;
             border: 5px solid #ffcc00;
             background: conic-gradient(
-                #d3d3d3 0deg 60deg,
-                white 60deg 120deg,
+                white 0deg 60deg,
+                #d3d3d3 60deg 120deg,
                 #d3d3d3 120deg 180deg,
-                white 180deg 240deg,
+                #d3d3d3 180deg 240deg,
                 #d3d3d3 240deg 300deg,
                 white 300deg 360deg
             );
@@ -48,9 +48,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         .text-overlay span {
             position: absolute;
@@ -146,9 +143,9 @@
                 <span>GAGNÉ</span>
                 <span>PERDU</span>
                 <span>PERDU</span>
-                <span>GAGNÉ</span>
                 <span>PERDU</span>
-                <span>GAGNÉ</span>
+                <span>PERDU</span>
+                <span>PERDU</span>
             </div>
         </div>
     </div>
@@ -180,16 +177,18 @@
             wheel.style.transform = `rotate(${rotation}deg)`;
 
             setTimeout(() => {
-                const chance = Math.random();
+                const finalDegree = rotation % 360;
+                const section = Math.floor(finalDegree / 60); // 6 sections de 60°
+
                 let result = {};
-                if (chance < 0.15) {
-                    // Gagner avec 15% de probabilité
+                if (section === 0) {
+                    // Section "GAGNÉ"
                     result = {
                         message: "🎉 Félicitations, vous avez gagné !",
                         image: gagneImage,
                     };
                 } else {
-                    // Perdre avec 85% de probabilité
+                    // Sections "PERDU"
                     result = {
                         message: "😔 C'est perdu, retentez votre chance !",
                         image: perduImage,
