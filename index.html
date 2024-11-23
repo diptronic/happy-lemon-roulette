@@ -31,14 +31,13 @@
             border-radius: 50%;
             border: 5px solid #ffcc00;
             background: conic-gradient(
-                #f9d423 0% 16.67%, 
-                #ff6f61 16.67% 50%, 
-                #f9d423 50% 66.67%, 
-                #ff6f61 66.67% 100%
+                #f9d423 0% 60deg, 
+                #ff6f61 60deg 120deg, 
+                #f9d423 120deg 180deg, 
+                #ff6f61 180deg 240deg, 
+                #f9d423 240deg 300deg, 
+                #ff6f61 300deg 360deg
             );
-            display: flex;
-            justify-content: center;
-            align-items: center;
             position: relative;
             transform: rotate(0deg);
             transition: transform 3s ease-out;
@@ -52,22 +51,28 @@
             transform-origin: 50% 50%;
         }
         .wheel .cadeau {
-            transform: rotate(30deg) translate(110px);
+            transform: rotate(30deg) translate(100px);
+            color: #f9d423; /* Jaune */
         }
         .wheel .perdu {
-            transform: rotate(90deg) translate(110px);
+            transform: rotate(90deg) translate(100px);
+            color: #ff6f61; /* Rouge */
         }
-        .wheel .perdu:nth-child(3) {
-            transform: rotate(150deg) translate(110px);
+        .wheel .cadeau:nth-child(3) {
+            transform: rotate(150deg) translate(100px);
+            color: #f9d423;
         }
-        .wheel .cadeau:nth-child(4) {
-            transform: rotate(210deg) translate(110px);
+        .wheel .perdu:nth-child(4) {
+            transform: rotate(210deg) translate(100px);
+            color: #ff6f61;
         }
-        .wheel .perdu:nth-child(5) {
-            transform: rotate(270deg) translate(110px);
+        .wheel .cadeau:nth-child(5) {
+            transform: rotate(270deg) translate(100px);
+            color: #f9d423;
         }
         .wheel .perdu:nth-child(6) {
-            transform: rotate(330deg) translate(110px);
+            transform: rotate(330deg) translate(100px);
+            color: #ff6f61;
         }
         .pointer {
             position: absolute;
