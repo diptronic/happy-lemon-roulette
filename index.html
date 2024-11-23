@@ -24,13 +24,10 @@
         h1 {
             color: #ffcc00; /* Couleur HappyLemon */
         }
-        #scratch-pad {
+        canvas {
             margin: 20px auto;
-            width: 300px;
-            height: 150px;
-            position: relative;
             border: 2px solid #ffcc00; /* Bordure jaune */
-            background-color: #ccc; /* Couleur initiale à gratter */
+            display: block;
         }
         .message {
             font-size: 18px;
@@ -43,46 +40,89 @@
     <div class="container">
         <h1>Jeu à Gratter - HappyLemon</h1>
         <p>Grattez pour découvrir si vous avez gagné !</p>
-        <div id="scratch-pad"></div>
+        <canvas id="scratchCanvas" width="300" height="150"></canvas>
         <div class="message" id="result-message"></div>
     </div>
 
-    <!-- Formulaire email (facultatif) -->
-    <div id="email-section">
-        <p>Recevez nos nouveautés et promotions :</p>
-        <form action="https://formspree.io/f/xjkvolea" method="POST">
-            <label for="email">Votre email :</label><br>
-            <input type="email" id="email" name="email" placeholder="Votre email">
-            <button type="submit">S'inscrire</button>
-        </form>
-    </div>
-
-    <!-- Importation de Scratch.js -->
-    <script src="https://cdn.jsdelivr.net/npm/scratch-js@1.0.4/dist/scratch.min.js"></script>
-    
     <script>
-        // Initialisation de Scratch.js
-        const scratchPad = new Scratch({
-            canvas: document.getElementById('scratch-pad'),
-            width: 300,
-            height: 150,
-            image: 'https://via.placeholder.com/300x150/ffcc00?text=Gagné!', // Image révélée après grattage
-            brush: {
-                size: 30,
-            },
-            onScratch: function (percentage) {
-                if (percentage > 50) {
-                    // Affiche le résultat lorsque 50 % sont grattés
-                    const isWinner = Math.random() < 0.15; // 15 % de chances de gagner
-                    const resultMessage = document.getElementById('result-message');
-                    if (isWinner) {
-                        resultMessage.textContent = '🎉 Félicitations, vous avez gagné un topping gratuit !';
-                    } else {
-                        resultMessage.textContent = 'Merci pour votre participation !';
-                    }
+        // Initialisation du jeu à gratter
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        const resultMessage = document.getElementById('result-message');
+
+        // Dessine la couche à gratter
+        ctx.fillStyle = "#ccc"; // Couleur de la surface grattable
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Ajoute le texte "Grattez ici"
+        ctx.fillStyle = "#000";
+        ctx.font = "20px Arial";
+        ctx.fillText("Grattez ici", canvas.width / 2 - 50, canvas.height / 2);
+
+        // Charge l'image de fond (révélée après grattage)
+        const backgroundImage = new Image();
+        backgroundImage.src = "https://via.placeholder.com/300x150/ffcc00?text=Gagné!";
+
+        backgroundImage.onload = () => {
+            // Dessine l'image en arrière-plan
+            const offscreenCanvas = document.createElement('canvas');
+            offscreenCanvas.width = canvas.width;
+            offscreenCanvas.height = canvas.height;
+            const offscreenCtx = offscreenCanvas.getContext('2d');
+            offscreenCtx.drawImage(backgroundImage, 0, 0);
+
+            // Gestion des interactions
+            let isDrawing = false;
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDrawing);
+
+            function startDrawing(e) {
+                isDrawing = true;
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+
+                // Vérifie si 50% de la surface est grattée
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+                let scratchedPixels = 0;
+
+                for (let i = 3; i < pixels.length; i += 4) {
+                    if (pixels[i] === 0) scratchedPixels++; // Pixel transparent
                 }
-            },
-        });
+
+                const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
+
+                if (scratchedPercentage > 50) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Révèle toute la surface
+                    const isWinner = Math.random() < 0.15; // 15 % de chances de gagner
+                    resultMessage.textContent = isWinner
+                        ? "🎉 Félicitations, vous avez gagné un topping gratuit !"
+                        : "Merci pour votre participation !";
+                }
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+                ctx.globalCompositeOperation = "destination-out";
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+            }
+        };
     </script>
 </body>
 </html>
