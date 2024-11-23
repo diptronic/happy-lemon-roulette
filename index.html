@@ -3,45 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à gratter HappyLemon France</title>
+    <title>Jeu à Gratter HappyLemon France</title>
     <style>
-        @font-face {
-            font-family: 'Candara';
-            src: url('https://fonts.cdnfonts.com/s/14217/Candara-Regular.ttf');
-        }
         body {
-            font-family: 'Candara', Arial, sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
             margin: 0;
-        }
-        h1 {
-            font-family: 'Candara', Arial, sans-serif;
-            font-size: 2.5em;
-            color: #FFD700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(90deg, #FFD700, #ADFF2F);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            padding: 10px;
-            border: 2px solid #ADFF2F;
-            border-radius: 10px;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            }
-            50% {
-                transform: scale(1.1);
-                box-shadow: 0 0 20px rgba(255, 215, 0, 1);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            }
         }
         .scratch-container {
             position: relative;
@@ -66,7 +34,7 @@
             color: #333;
         }
         .newsletter {
-            font-family: 'Candara', Arial, sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 20px;
         }
@@ -91,7 +59,7 @@
     </style>
 </head>
 <body>
-    <h1>Jeu à gratter HappyLemon France</h1>
+    <h1>Jeu à Gratter HappyLemon France</h1>
     <div class="scratch-container">
         <canvas id="scratchCanvas" width="350" height="200"></canvas>
     </div>
@@ -110,30 +78,15 @@
         const ctx = canvas.getContext('2d');
         const resultMessage = document.getElementById('resultMessage');
         const newsletter = document.getElementById('newsletter');
-
         let isDrawing = false;
-        let totalScratched = 0;
-        let totalPixels = 0;
-        const gamePlayedKey = 'gamePlayed'; // Clé pour vérifier si le joueur a déjà joué
 
-        // Vérifier si le joueur a déjà joué
-        if (localStorage.getItem(gamePlayedKey)) {
-            resultMessage.textContent = "Vous avez déjà joué. Merci de laisser un nouvel avis pour retenter votre chance !";
-            canvas.style.display = "none";
-            return;
-        }
-
-        // Dessiner la couche grise
+        // Étape 1 : Dessiner la couche grise
         function drawMask() {
-            ctx.globalCompositeOperation = "source-over";
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            totalPixels = imageData.data.length / 4; // Total de pixels
         }
 
-        // Activer le grattage
+        // Étape 2 : Activer le grattage
         function activateScratch() {
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mouseup', stopDrawing);
@@ -160,21 +113,23 @@
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
+            // Effacer la couche grise sous la zone grattée
             ctx.globalCompositeOperation = "destination-out";
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
             ctx.fill();
-
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            let scratchedPixels = 0;
-            for (let i = 3; i < imageData.data.length; i += 4) {
-                if (imageData.data[i] === 0) scratchedPixels++;
-            }
-            totalScratched = scratchedPixels;
         }
 
         function checkCompletion() {
-            const scratchedPercentage = (totalScratched / totalPixels) * 100;
+            // Vérifier si 50% de la surface a été grattée
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let scratchedPixels = 0;
+
+            for (let i = 3; i < imageData.data.length; i += 4) {
+                if (imageData.data[i] === 0) scratchedPixels++;
+            }
+
+            const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
             if (scratchedPercentage > 50) {
                 revealResult();
             }
@@ -183,6 +138,7 @@
         function revealResult() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Déterminer le résultat
             const isWinner = Math.random() < 0.13;
             const image = new Image();
             image.src = isWinner ? "https://i.imgur.com/kRhG7ix.jpeg" : "https://i.imgur.com/NyJhyhw.jpeg";
@@ -190,16 +146,15 @@
             image.onload = () => {
                 ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
                 resultMessage.textContent = isWinner
-                    ? `🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !`
+                    ? "🎉 Félicitations, vous avez gagné un topping gratuit ou 10% de réduction !"
                     : "C'est perdu :( Merci de votre participation!";
                 newsletter.style.display = 'block';
             };
-
-            localStorage.setItem(gamePlayedKey, 'true');
         }
 
-        drawMask();
-        activateScratch();
+        // Initialisation
+        drawMask(); // Dessiner la couche grise
+        activateScratch(); // Activer le grattage
     </script>
 </body>
 </html>
