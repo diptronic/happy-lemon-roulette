@@ -80,7 +80,7 @@
 
         // Charger l'image en arrière-plan
         const backgroundImage = new Image();
-        backgroundImage.crossOrigin = "anonymous";
+        backgroundImage.crossOrigin = "anonymous"; // Important pour le support cross-origin
         const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
         backgroundImage.src = isWinner
             ? "https://i.imgur.com/kRhG7ix.jpeg" // Image Gagné
@@ -97,7 +97,7 @@
         // Dessiner la couche grise
         function drawMask() {
             ctx.globalCompositeOperation = "source-over";
-            ctx.fillStyle = "#ccc";
+            ctx.fillStyle = "#ccc"; // Couleur grise
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
@@ -130,7 +130,7 @@
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-            // Effacer la couche grise pour révéler l'image
+            // Effacer la couche grise
             ctx.globalCompositeOperation = "destination-out";
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
