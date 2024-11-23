@@ -76,22 +76,18 @@
         const newsletter = document.getElementById('newsletter');
         let isDrawing = false;
 
-        // Étape 1 : Charger l'image en arrière-plan avec l'attribut crossOrigin
+        // Étape 1 : Charger l'image en arrière-plan
         const backgroundImage = new Image();
-        backgroundImage.crossOrigin = "anonymous"; // Permet d'utiliser l'image sur le canvas sans taint
+        backgroundImage.crossOrigin = "anonymous";
         const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
         backgroundImage.src = isWinner
             ? "https://i.imgur.com/kRhG7ix.jpeg" // Image Gagné
             : "https://i.imgur.com/NyJhyhw.jpeg"; // Image Perdu
 
         backgroundImage.onload = () => {
+            ctx.globalCompositeOperation = "source-over";
             ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             drawMask(); // Dessiner la couche grise
-        };
-
-        backgroundImage.onerror = () => {
-            console.error("Erreur lors du chargement de l'image");
-            resultMessage.textContent = "Erreur lors du chargement du jeu. Veuillez réessayer plus tard.";
         };
 
         // Étape 2 : Dessiner la couche grise
@@ -150,7 +146,7 @@
             }
         }
 
-        // Étape 5 : Révéler le résultat
+        // Étape 5 : Révéler le résultat final
         function revealResult() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = "source-over";
