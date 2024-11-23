@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Image Directe</title>
+    <title>Test Couche Grise</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,13 +12,13 @@
         }
         canvas {
             margin: 20px auto;
-            border: 2px solid red;
+            border: 2px solid blue;
             display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Test Image Directe</h1>
+    <h1>Test Couche Grise</h1>
     <canvas id="testCanvas" width="300" height="150"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
@@ -29,7 +29,9 @@
 
         bgImage.onload = () => {
             console.log("Image chargée :", bgImage.src);
-            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height); // Dessine l'image directement
+            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height); // Dessine l'image
+            ctx.fillStyle = "#ccc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height); // Ajoute la couche grise
         };
 
         bgImage.onerror = () => {
