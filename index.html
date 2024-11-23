@@ -180,16 +180,16 @@
             wheel.style.transform = `rotate(${rotation}deg)`;
 
             setTimeout(() => {
-                const finalDegree = rotation % 360;
-                const section = Math.floor(finalDegree / 60);
-
+                const chance = Math.random();
                 let result = {};
-                if (section === 0 || section === 3 || section === 5) {
+                if (chance < 0.15) {
+                    // Gagner avec 15% de probabilité
                     result = {
                         message: "🎉 Félicitations, vous avez gagné !",
                         image: gagneImage,
                     };
                 } else {
+                    // Perdre avec 85% de probabilité
                     result = {
                         message: "😔 C'est perdu, retentez votre chance !",
                         image: perduImage,
