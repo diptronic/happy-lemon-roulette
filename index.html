@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter - wScratchPad</title>
+    <title>Jeu à Gratter - Correction</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wScratchPad/2.2.0/wScratchPad.min.js"></script>
     <style>
@@ -11,17 +11,21 @@
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
+            margin: 0;
+            overflow: hidden; /* Empêche le scrolling */
         }
         #scratchPad {
             margin: 20px auto;
             border: 2px solid green;
             width: 380px;
             height: 365px;
+            position: relative; /* Nécessaire pour la bonne gestion du positionnement */
+            overflow: hidden; /* Empêche le contenu de dépasser */
         }
     </style>
 </head>
 <body>
-    <h1>Jeu à Gratter - wScratchPad</h1>
+    <h1>Jeu à Gratter - Correction</h1>
     <div id="scratchPad"></div>
     <script>
         $(document).ready(function () {
@@ -29,6 +33,7 @@
                 size: 30, // Taille du grattage
                 bg: 'https://i.imgur.com/kRhG7ix.jpeg', // Image Gagné
                 fg: 'https://via.placeholder.com/380x365/CCCCCC.png?text=Grattez+ici', // Couche grise
+                cursor: "pointer", // Assure un curseur de grattage visible
                 scratchMove: function (e, percent) {
                     if (percent > 50) {
                         console.log('Grattage réussi à 50%');
@@ -36,6 +41,15 @@
                     }
                 }
             });
+
+            // Empêcher le scrolling lors des interactions
+            document.body.addEventListener(
+                "touchmove",
+                function (e) {
+                    e.preventDefault();
+                },
+                { passive: false }
+            );
         });
     </script>
 </body>
