@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Couche Grise</title>
+    <title>Test Grattage</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,13 +12,13 @@
         }
         canvas {
             margin: 20px auto;
-            border: 2px solid green;
+            border: 2px solid red;
             display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Test Couche Grise</h1>
+    <h1>Test Grattage</h1>
     <canvas id="testCanvas" width="380" height="365"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
@@ -38,7 +38,45 @@
             // Étape 2 : Ajouter une couche grise par-dessus
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Étape 3 : Activer le grattage
+            activateScratch();
         };
+
+        function activateScratch() {
+            let isDrawing = false;
+
+            // Ajouter des événements
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mousemove', draw);
+
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+
+            function startDrawing() {
+                isDrawing = true;
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+                // Appliquer l'effet de grattage
+                ctx.globalCompositeOperation = "destination-out";
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+            }
+        }
 
         bgImage.onerror = () => {
             console.error("Erreur de chargement de l'image :", bgImage.src);
