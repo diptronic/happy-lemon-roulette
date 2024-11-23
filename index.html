@@ -8,10 +8,9 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #fefae0;
+            background-color: #fefae0; /* Fond jaune citron */
             padding: 20px;
             margin: 0;
-            overflow-x: hidden; /* Empêche le scrolling horizontal */
         }
         .container {
             max-width: 800px;
@@ -23,16 +22,15 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            color: #ffcc00;
+            color: #ffcc00; /* Couleur HappyLemon */
         }
-        #scratch-area {
+        #scratch-pad {
             margin: 20px auto;
             width: 300px;
             height: 150px;
-            border: 2px solid #ffcc00;
             position: relative;
-            background-color: #f7f7f7;
-            touch-action: none; /* Empêche le scrolling dans la zone */
+            border: 2px solid #ffcc00; /* Bordure jaune */
+            background-color: #ccc; /* Couleur initiale à gratter */
         }
         .message {
             font-size: 18px;
@@ -45,31 +43,37 @@
     <div class="container">
         <h1>Jeu à Gratter - HappyLemon</h1>
         <p>Grattez pour découvrir si vous avez gagné !</p>
-        <div id="scratch-area"></div>
+        <div id="scratch-pad"></div>
         <div class="message" id="result-message"></div>
     </div>
 
-    <!-- Importation de la bibliothèque Scratch Card JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/scratchcard/1.0.3/scratchcard.min.js"></script>
+    <!-- Importation de wScratchPad -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wScratchPad/2.2.0/wScratchPad.min.js"></script>
     <script>
-        // Initialisation du jeu à gratter
-        const scratchCard = new ScratchCard('#scratch-area', {
-            scratchType: SCRATCH_TYPE.CIRCLE,
-            containerWidth: 300,
-            containerHeight: 150,
-            imageForwardSrc: 'https://via.placeholder.com/300x150/cccccc?text=Grattez+ici',
-            imageBackgroundSrc: 'https://via.placeholder.com/300x150/ffcc00?text=Gagné!',
-            callback: function () {
-                // Probabilité de gagner : 15 %
-                const isWinner = Math.random() < 0.15; 
-                const resultMessage = document.getElementById('result-message');
-                if (isWinner) {
-                    resultMessage.textContent = '🎉 Félicitations, vous avez gagné un topping gratuit !';
-                } else {
-                    resultMessage.textContent = 'Merci pour votre participation ! Bonne chance la prochaine fois !';
+        // Initialisation de wScratchPad
+        const scratchPad = $('#scratch-pad').wScratchPad({
+            size: 30, // Taille de l'outil de grattage
+            bg: 'https://via.placeholder.com/300x150/ffcc00?text=Gagné!', // Image révélée après grattage
+            fg: 'https://via.placeholder.com/300x150/cccccc?text=Grattez+ici', // Image à gratter
+            scratchMove: function () {
+                // Calculer si suffisamment de surface a été grattée
+                const percentScratched = scratchPad.wScratchPad('percentage');
+                if (percentScratched > 50) {
+                    scratchPad.wScratchPad('clear'); // Révèle toute la surface
+                    const isWinner = Math.random() < 0.15; // 15 % de chances de gagner
+                    const resultMessage = document.getElementById('result-message');
+                    if (isWinner) {
+                        resultMessage.textContent = '🎉 Félicitations, vous avez gagné un topping gratuit !';
+                    } else {
+                        resultMessage.textContent = 'Merci pour votre participation !';
+                    }
                 }
             },
         });
+    </script>
+</body>
+</html>
+
 
         // Empêche le scrolling dans la zone de grattage
         document.getElementById('scratch-area').addEventListener('touchmove', (e) => e.preventDefault());
