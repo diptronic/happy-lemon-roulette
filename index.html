@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Redessin Dynamique</title>
+    <title>Test Grattage - Correctif</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,17 +18,16 @@
     </style>
 </head>
 <body>
-    <h1>Test Redessin Dynamique</h1>
+    <h1>Test Grattage - Correctif</h1>
     <canvas id="testCanvas" width="380" height="365"></canvas>
     <script>
         const canvas = document.getElementById('testCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Variables pour la gestion du grattage
+        // Variables de gestion
         let isDrawing = false;
-        let maskImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        // Étape 1 : Dessiner la couche rouge
+        // Étape 1 : Dessiner le fond rouge
         function drawBackground() {
             ctx.fillStyle = "red";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -38,7 +37,6 @@
         function drawMask() {
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            maskImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
         }
 
         // Étape 3 : Activer le grattage
@@ -62,19 +60,19 @@
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
 
-                // Efface une partie de la couche grise
-                ctx.putImageData(maskImage, 0, 0);
-                ctx.clearRect(x - 10, y - 10, 20, 20);
-
-                // Redessine la couche rouge
-                drawBackground();
+                // Effacer la couche grise uniquement dans la zone touchée
+                ctx.globalCompositeOperation = "destination-out";
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+                ctx.globalCompositeOperation = "source-over"; // Rétablir le mode normal
             }
         }
 
         // Initialisation
         drawBackground(); // Couche rouge
         drawMask(); // Couche grise
-        activateScratch(); // Grattage
+        activateScratch(); // Activer le grattage
     </script>
 </body>
 </html>
