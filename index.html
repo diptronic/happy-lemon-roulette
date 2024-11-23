@@ -43,7 +43,7 @@
 
         // Étape 1 : Dessiner la couche grise
         function drawMask() {
-            ctx.fillStyle = "#ccc";
+            ctx.fillStyle = "#ccc"; // Couleur grise
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
@@ -64,6 +64,7 @@
 
         function stopDrawing() {
             isDrawing = false;
+            checkCompletion(); // Vérifie si 50% ont été grattés
         }
 
         function scratch(e) {
@@ -78,6 +79,23 @@
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
             ctx.fill();
+        }
+
+        // Étape 3 : Vérifier si 50% de la surface est grattée
+        function checkCompletion() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let scratchedPixels = 0;
+
+            for (let i = 3; i < imageData.data.length; i += 4) {
+                if (imageData.data[i] === 0) scratchedPixels++; // Compte les pixels transparents
+            }
+
+            const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
+
+            if (scratchedPercentage > 50) {
+                console.log("Plus de 50% grattés !");
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Révéler toute l'image
+            }
         }
 
         // Initialisation
