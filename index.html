@@ -42,7 +42,8 @@
 <body>
     <h1>Jeu à gratter HappyLemon France</h1>
     <div class="scratch-container">
-        <img src="https://i.imgur.com/kRhG7ix.jpeg" class="background-image" alt="Image Gagné">
+        <img src="https://i.imgur.com/kRhG7ix.jpeg" class="background-image" id="winImage" alt="Image Gagné" style="display: none;">
+        <img src="https://i.imgur.com/NyJhyhw.jpeg" class="background-image" id="loseImage" alt="Image Perdu" style="display: none;">
         <canvas id="scratchCanvas" width="370" height="250"></canvas>
     </div>
     <div class="message" id="resultMessage"></div>
@@ -50,9 +51,20 @@
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
         const resultMessage = document.getElementById('resultMessage');
+        const winImage = document.getElementById('winImage');
+        const loseImage = document.getElementById('loseImage');
+
         let isDrawing = false;
         let totalScratched = 0;
         let totalPixels = 0;
+        const gamePlayedKey = 'gamePlayed'; // Clé pour vérifier si le joueur a déjà joué
+
+        // Vérifier si le joueur a déjà joué
+        if (localStorage.getItem(gamePlayedKey)) {
+            resultMessage.textContent = "Vous avez déjà joué. Merci de laisser un nouvel avis pour retenter votre chance !";
+            canvas.style.display = "none";
+            return;
+        }
 
         // Étape 1 : Dessiner la couche grise
         function drawMask() {
@@ -106,7 +118,7 @@
 
         function checkCompletion() {
             const scratchedPercentage = (totalScratched / totalPixels) * 100;
-            if (scratchedPercentage > 60) {
+            if (scratchedPercentage > 50) {
                 revealResult();
             }
         }
@@ -120,10 +132,15 @@
             const reward = Math.random() < 0.7 ? "un topping gratuit !" : "10% de réduction sur un prochain achat !";
 
             if (isWinner) {
+                winImage.style.display = "block";
                 resultMessage.textContent = `🎉 Félicitations, vous avez gagné ${reward}`;
             } else {
-                resultMessage.textContent = "Merci pour votre participation ! Retentez votre chance !";
+                loseImage.style.display = "block";
+                resultMessage.textContent = "C'est perdu :( Merci de votre participation.";
             }
+
+            // Marquer le jeu comme joué
+            localStorage.setItem(gamePlayedKey, 'true');
         }
 
         // Initialisation
