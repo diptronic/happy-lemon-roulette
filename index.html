@@ -123,12 +123,12 @@
             flipButton.disabled = true; // Désactiver le bouton après un clic
 
             // Début de l'animation de la pièce
-            const isWin = Math.random() < 0.15; // 15% de chances de gagner
+            const isWin = Math.random() < 0.20; // 20% de chances de gagner
             coin.classList.remove("show-back");
             setTimeout(() => {
                 if (isWin) {
                     // Gagné : choisir le gain spécifique
-                    const gainType = Math.random() < 0.5 ? "Un topping gratuit" : "10% de réduction";
+                    const gainType = Math.random() < 0.5 ? "Un topping gratuit" : "10% de réduction sur votre prochain achat!";
                     coin.querySelector('.coin-back').textContent = "GAGNÉ";
                     coin.classList.add("show-back");
                     setTimeout(() => {
@@ -140,7 +140,7 @@
                     coin.querySelector('.coin-back').textContent = "PERDU";
                     coin.classList.add("show-back");
                     setTimeout(() => {
-                        alert("😔 C'est perdu, merci pour votre avis sur Google !");
+                        alert("😔 C'est perdu, merci encore pour votre avis sur Google à bientôt chez HappyLemon!");
                         emailForm.style.display = "block";
                     }, 1000);
                 }
