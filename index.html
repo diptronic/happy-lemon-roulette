@@ -112,30 +112,6 @@
             height: auto;
             border-radius: 5px;
         }
-        .newsletter {
-            margin-top: 20px;
-            display: none;
-        }
-        .newsletter input[type="email"] {
-            padding: 10px;
-            width: 70%;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .newsletter button {
-            padding: 10px 20px;
-            background-color: #ffcc00;
-            color: #8B4513;
-            border: 2px solid #8B4513;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .newsletter button:hover {
-            background-color: #8B4513;
-            color: white;
-        }
         .overlay {
             position: fixed;
             top: 0;
@@ -173,16 +149,48 @@
         <img id="resultImage" src="" alt="Résultat">
         <p id="resultMessage" style="margin-top: 10px; font-size: 18px;"></p>
     </div>
-    <div class="newsletter" id="newsletter">
-        <h2>Inscrivez-vous à notre newsletter</h2>
-        <form action="https://formspree.io/f/xjkvolea" method="POST">
-            <input type="email" name="email" placeholder="Votre email" required>
-            <button type="submit">S'inscrire</button>
-        </form>
-    </div>
 
     <script>
-        // JavaScript reste inchangé, car les styles améliorent uniquement l'apparence
+        const wheel = document.getElementById('wheel');
+        const resultMessage = document.getElementById('resultMessage');
+        const spinButton = document.getElementById('spinButton');
+        const resultImage = document.getElementById('resultImage');
+        const resultModal = document.getElementById('resultModal');
+        const overlay = document.getElementById('overlay');
+        let isSpinning = false;
+
+        const gagneImage = "https://i.imgur.com/kRhG7ix.jpeg";
+        const perduImage = "https://i.imgur.com/NyJhyhw.jpeg";
+
+        spinButton.addEventListener('click', () => {
+            if (isSpinning) return; // Empêche de relancer pendant que la roue tourne
+            isSpinning = true;
+
+            const rotation = Math.floor(Math.random() * 360) + 360 * 3; // Rotation aléatoire + tours complets
+            wheel.style.transform = `rotate(${rotation}deg)`;
+
+            // Détermine le résultat après 3 secondes (durée de l'animation)
+            setTimeout(() => {
+                const finalDegree = rotation % 360;
+                const isWinner = Math.random() < 0.15; // Probabilité de gagner : 15%
+                const result = isWinner
+                    ? { message: "🎉 Félicitations, vous avez gagné un topping gratuit ou une réduction !", image: gagneImage }
+                    : { message: "😔 C'est perdu, retentez votre chance !", image: perduImage };
+
+                // Afficher l'image et le message dans la modale
+                resultMessage.textContent = result.message;
+                resultImage.src = result.image;
+                overlay.style.display = "block";
+                resultModal.style.display = "block";
+                isSpinning = false;
+            }, 3000);
+        });
+
+        // Fermer la modale si on clique sur l'overlay
+        overlay.addEventListener('click', () => {
+            overlay.style.display = "none";
+            resultModal.style.display = "none";
+        });
     </script>
 </body>
 </html>
