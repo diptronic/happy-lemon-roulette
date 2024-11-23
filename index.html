@@ -169,7 +169,7 @@
             canvas.style.transform = `rotate(${rotation}deg)`;
 
             setTimeout(() => {
-                const finalDegree = rotation % 360;
+                const finalDegree = (rotation % 360 + 30) % 360; // Ajustement pour pointer correctement
                 const sectionIndex = Math.floor(finalDegree / (360 / sections.length));
                 const result = sections[sectionIndex];
 
