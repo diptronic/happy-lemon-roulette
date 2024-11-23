@@ -3,118 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter - Test</title>
+    <title>Test de Chargement d'Image</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
-            padding: 20px;
-            margin: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
         canvas {
-            margin: 20px auto;
-            border: 2px solid #ffcc00;
+            border: 2px solid red;
             display: block;
-        }
-        .message {
-            font-size: 18px;
-            margin-top: 20px;
-            color: #333;
+            margin: 20px auto;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Jeu à Gratter - Test</h1>
-        <canvas id="scratchCanvas" width="300" height="150"></canvas>
-        <div class="message" id="result-message"></div>
-    </div>
-
+    <h1>Test de Chargement d'Image</h1>
+    <canvas id="scratchCanvas" width="300" height="150"></canvas>
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
-        const resultMessage = document.getElementById('result-message');
 
-        // Prépare une image pour l'arrière-plan
-        const bgImage = new Image();
-        bgImage.src = "https://via.placeholder.com/300x150.png?text=Gagn%C3%A9"; // Image test
+        console.log("Canvas initialisé :", canvas);
 
-        bgImage.onload = () => {
-            console.log("Image de fond chargée :", bgImage.src);
-            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height); // Dessine l'image de fond
+        const testImage = new Image();
+        testImage.src = "https://via.placeholder.com/300x150.png?text=Test+Image"; // Image test simple
 
-            // Dessine la couche grattable
-            ctx.fillStyle = "#ccc";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Ajoute le texte "Grattez ici"
-            ctx.fillStyle = "#000";
-            ctx.font = "20px Arial";
-            ctx.fillText("Grattez ici", 100, 75); // Texte centré
+        testImage.onload = () => {
+            console.log("Image chargée :", testImage.src);
+            ctx.drawImage(testImage, 0, 0, canvas.width, canvas.height); // Dessine l'image
         };
 
-        bgImage.onerror = () => {
-            console.error("Erreur de chargement de l'image :", bgImage.src);
+        testImage.onerror = () => {
+            console.error("Erreur de chargement de l'image :", testImage.src);
         };
-
-        let isDrawing = false;
-
-        // Événements pour gratter
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseleave', stopDrawing);
-
-        canvas.addEventListener('touchstart', startDrawing);
-        canvas.addEventListener('touchmove', draw);
-        canvas.addEventListener('touchend', stopDrawing);
-
-        function startDrawing(e) {
-            isDrawing = true;
-        }
-
-        function stopDrawing() {
-            isDrawing = false;
-
-            // Vérifie si suffisamment de surface est grattée
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const pixels = imageData.data;
-            let scratchedPixels = 0;
-
-            for (let i = 3; i < pixels.length; i += 4) {
-                if (pixels[i] === 0) scratchedPixels++; // Pixel transparent
-            }
-
-            const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
-
-            if (scratchedPercentage > 50) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Révèle toute la surface
-                resultMessage.textContent = "🎉 Félicitations, vous avez gratté suffisamment !";
-            }
-        }
-
-        function draw(e) {
-            if (!isDrawing) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-            ctx.globalCompositeOperation = "destination-out"; // Rendre transparent
-            ctx.beginPath();
-            ctx.arc(x, y, 20, 0, Math.PI * 2, false);
-            ctx.fill();
-        }
     </script>
 </body>
 </html>
