@@ -1,42 +1,223 @@
-spinButton.addEventListener('click', () => {
-    if (isSpinning) return; // Empêche de relancer pendant que la roue tourne
-    isSpinning = true;
-
-    const rotation = Math.floor(Math.random() * 360) + 360 * 3; // Rotation aléatoire + tours complets
-    wheel.style.transform = `rotate(${rotation}deg)`;
-
-    // Détermine le résultat après 3 secondes (durée de l'animation)
-    setTimeout(() => {
-        const finalDegree = rotation % 360;
-        const section = Math.floor(finalDegree / 60); // Divise les 360° en 6 sections
-
-        let result = {};
-        if (section === 0 || section === 3) {
-            // Sections "CADEAU"
-            result = {
-                message: "🎉 Félicitations, vous avez gagné !",
-                image: gagneImage,
-                cadeau: Math.random() < 0.5 ? "Topping gratuit" : "10% de réduction",
-            };
-        } else {
-            // Sections "PERDU"
-            result = {
-                message: "😔 C'est perdu, retentez votre chance !",
-                image: perduImage,
-            };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roue de la Fortune HappyLemon</title>
+    <style>
+        body {
+            font-family: Candara, Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(120deg, #fff9c4, #fefae0);
+            margin: 0;
+            padding: 0;
         }
-
-        // Affiche le résultat
-        resultMessage.textContent = result.message;
-        resultImage.src = result.image;
-
-        if (result.cadeau) {
-            resultMessage.textContent += ` Votre cadeau : ${result.cadeau}.`;
+        h1 {
+            font-size: 32px;
+            color: #8B4513;
+            margin-top: 20px;
+            text-shadow: 2px 2px #ffd700;
+            font-weight: bold;
         }
+        .wheel-container {
+            position: relative;
+            margin: 50px auto;
+            width: 300px;
+            height: 300px;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #ffcc00;
+            background: conic-gradient(
+                #f9d423 0% 16.67%, 
+                #ff6f61 16.67% 50%, 
+                #f9d423 50% 66.67%, 
+                #ff6f61 66.67% 100%
+            );
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transform: rotate(0deg);
+            transition: transform 3s ease-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .wheel span {
+            position: absolute;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            transform-origin: 50% 50%;
+        }
+        .wheel .cadeau {
+            transform: rotate(30deg) translate(110px);
+        }
+        .wheel .perdu {
+            transform: rotate(90deg) translate(110px);
+        }
+        .wheel .perdu:nth-child(3) {
+            transform: rotate(150deg) translate(110px);
+        }
+        .wheel .cadeau:nth-child(4) {
+            transform: rotate(210deg) translate(110px);
+        }
+        .wheel .perdu:nth-child(5) {
+            transform: rotate(270deg) translate(110px);
+        }
+        .wheel .perdu:nth-child(6) {
+            transform: rotate(330deg) translate(110px);
+        }
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 20px solid red;
+            animation: bounce 1s infinite alternate;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ffcc00;
+            color: #8B4513;
+            border: 2px solid #8B4513;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            background-color: #8B4513;
+            color: white;
+        }
+        .result-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background-color: white;
+            border: 2px solid #ffcc00;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .result-modal img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        @keyframes bounce {
+            from {
+                transform: translateX(-50%) translateY(0);
+            }
+            to {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Roue de la Fortune HappyLemon</h1>
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div id="wheel" class="wheel">
+            <span class="cadeau">CADEAU</span>
+            <span class="perdu">PERDU</span>
+            <span class="perdu">PERDU</span>
+            <span class="cadeau">CADEAU</span>
+            <span class="perdu">PERDU</span>
+            <span class="perdu">PERDU</span>
+        </div>
+    </div>
+    <button id="spinButton">Lancer la Roue</button>
+    <div class="overlay" id="overlay"></div>
+    <div class="result-modal" id="resultModal">
+        <img id="resultImage" src="" alt="Résultat">
+        <p id="resultMessage" style="margin-top: 10px; font-size: 18px;"></p>
+    </div>
 
-        overlay.style.display = "block";
-        resultModal.style.display = "block";
+    <script>
+        const wheel = document.getElementById('wheel');
+        const resultMessage = document.getElementById('resultMessage');
+        const spinButton = document.getElementById('spinButton');
+        const resultImage = document.getElementById('resultImage');
+        const resultModal = document.getElementById('resultModal');
+        const overlay = document.getElementById('overlay');
+        let isSpinning = false;
 
-        isSpinning = false; // Autorise un nouveau tirage
-    }, 3000);
-});
+        const gagneImage = "https://i.imgur.com/kRhG7ix.jpeg";
+        const perduImage = "https://i.imgur.com/NyJhyhw.jpeg";
+
+        spinButton.addEventListener('click', () => {
+            if (isSpinning) return; // Empêche de relancer pendant que la roue tourne
+            isSpinning = true;
+
+            const rotation = Math.floor(Math.random() * 360) + 360 * 3; // Rotation aléatoire + tours complets
+            wheel.style.transform = `rotate(${rotation}deg)`;
+
+            // Détermine le résultat après 3 secondes (durée de l'animation)
+            setTimeout(() => {
+                const finalDegree = rotation % 360;
+                const section = Math.floor(finalDegree / 60); // Divise les 360° en 6 sections
+
+                let result = {};
+                if (section === 0 || section === 3) {
+                    // Sections "CADEAU"
+                    result = {
+                        message: "🎉 Félicitations, vous avez gagné !",
+                        image: gagneImage,
+                        cadeau: Math.random() < 0.5 ? "Topping gratuit" : "10% de réduction",
+                    };
+                } else {
+                    // Sections "PERDU"
+                    result = {
+                        message: "😔 C'est perdu, retentez votre chance !",
+                        image: perduImage,
+                    };
+                }
+
+                // Affiche le résultat
+                resultMessage.textContent = result.message;
+                resultImage.src = result.image;
+
+                if (result.cadeau) {
+                    resultMessage.textContent += ` Votre cadeau : ${result.cadeau}.`;
+                }
+
+                overlay.style.display = "block";
+                resultModal.style.display = "block";
+
+                isSpinning = false; // Autorise un nouveau tirage
+            }, 3000);
+        });
+
+        // Fermer la modale si on clique sur l'overlay
+        overlay.addEventListener('click', () => {
+            overlay.style.display = "none";
+            resultModal.style.display = "none";
+        });
+    </script>
+</body>
+</html>
