@@ -61,12 +61,24 @@
 
         // Charge les images pour "Gagné" et "Perdu"
         const wonImage = new Image();
-        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // Remplacez par l’URL réelle de votre image "Gagné"
-
         const lostImage = new Image();
-        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/perdu_hl.jpg"; // Remplacez par l’URL réelle de votre image "Perdu"
+        wonImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/gagne_hl.jpg"; // Image "Gagné"
+        lostImage.src = "https://raw.githubusercontent.com/diptronic/happy-lemon-roulette/main/perdu_hl.jpg"; // Image "Perdu"
 
-        wonImage.onload = () => lostImage.onload = () => {
+        let wonImageLoaded = false;
+        let lostImageLoaded = false;
+
+        // Charge les images et initialise le jeu lorsque les deux sont prêtes
+        wonImage.onload = () => {
+            wonImageLoaded = true;
+            if (wonImageLoaded && lostImageLoaded) initGame();
+        };
+        lostImage.onload = () => {
+            lostImageLoaded = true;
+            if (wonImageLoaded && lostImageLoaded) initGame();
+        };
+
+        function initGame() {
             let isDrawing = false;
 
             canvas.addEventListener('mousedown', startDrawing);
@@ -118,7 +130,7 @@
                 ctx.arc(x, y, 20, 0, Math.PI * 2, false);
                 ctx.fill();
             }
-        };
+        }
     </script>
 </body>
 </html>
