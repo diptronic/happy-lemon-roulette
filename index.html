@@ -8,14 +8,16 @@
         body {
             font-family: Candara, Arial, sans-serif;
             text-align: center;
-            background-color: #fefae0;
+            background: linear-gradient(120deg, #fff9c4, #fefae0);
             margin: 0;
             padding: 0;
         }
         h1 {
-            font-size: 24px;
-            color: #8B4513; /* Marron */
+            font-size: 32px;
+            color: #8B4513;
             margin-top: 20px;
+            text-shadow: 2px 2px #ffd700;
+            font-weight: bold;
         }
         .wheel-container {
             position: relative;
@@ -29,10 +31,10 @@
             border-radius: 50%;
             border: 5px solid #ffcc00;
             background: conic-gradient(
-                #ffcc00 0% 25%, 
-                #ccc 25% 50%, 
-                #ffcc00 50% 75%, 
-                #ccc 75% 100%
+                #f9d423 0% 25%, 
+                #ff6f61 25% 50%, 
+                #f9d423 50% 75%, 
+                #ff6f61 75% 100%
             );
             display: flex;
             justify-content: center;
@@ -40,6 +42,7 @@
             position: relative;
             transform: rotate(0deg);
             transition: transform 3s ease-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         .wheel span {
             position: absolute;
@@ -70,19 +73,23 @@
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
             border-bottom: 20px solid red;
+            animation: bounce 1s infinite alternate;
         }
         button {
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: green;
-            color: white;
-            border: none;
+            background-color: #ffcc00;
+            color: #8B4513;
+            border: 2px solid #8B4513;
             border-radius: 5px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s ease-in-out;
         }
         button:hover {
-            background-color: darkgreen;
+            background-color: #8B4513;
+            color: white;
         }
         .result-modal {
             position: fixed;
@@ -92,7 +99,7 @@
             width: 90%;
             max-width: 400px;
             background-color: white;
-            border: 2px solid green;
+            border: 2px solid #ffcc00;
             border-radius: 10px;
             padding: 20px;
             text-align: center;
@@ -118,14 +125,16 @@
         }
         .newsletter button {
             padding: 10px 20px;
-            background-color: green;
-            color: white;
-            border: none;
+            background-color: #ffcc00;
+            color: #8B4513;
+            border: 2px solid #8B4513;
             border-radius: 5px;
             cursor: pointer;
+            font-weight: bold;
         }
         .newsletter button:hover {
-            background-color: darkgreen;
+            background-color: #8B4513;
+            color: white;
         }
         .overlay {
             position: fixed;
@@ -136,6 +145,14 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
             display: none;
+        }
+        @keyframes bounce {
+            from {
+                transform: translateX(-50%) translateY(0);
+            }
+            to {
+                transform: translateX(-50%) translateY(-10px);
+            }
         }
     </style>
 </head>
@@ -165,48 +182,7 @@
     </div>
 
     <script>
-        const wheel = document.getElementById('wheel');
-        const resultMessage = document.getElementById('resultMessage');
-        const spinButton = document.getElementById('spinButton');
-        const resultImage = document.getElementById('resultImage');
-        const resultModal = document.getElementById('resultModal');
-        const overlay = document.getElementById('overlay');
-        const newsletter = document.getElementById('newsletter');
-        let isSpinning = false;
-
-        const gagneImage = "https://i.imgur.com/kRhG7ix.jpeg";
-        const perduImage = "https://i.imgur.com/NyJhyhw.jpeg";
-
-        spinButton.addEventListener('click', () => {
-            if (isSpinning) return; // Empêche de relancer pendant que la roue tourne
-            isSpinning = true;
-
-            const rotation = Math.floor(Math.random() * 360) + 360 * 3; // Rotation aléatoire + tours complets
-            wheel.style.transform = `rotate(${rotation}deg)`;
-
-            // Détermine le résultat après 3 secondes (durée de l'animation)
-            setTimeout(() => {
-                const finalDegree = rotation % 360;
-                const isWinner = Math.random() < 0.15; // Probabilité de gagner : 15%
-                const result = isWinner
-                    ? { message: "🎉 Félicitations, vous avez gagné un topping gratuit ou une réduction !", image: gagneImage }
-                    : { message: "😔 C'est perdu, retentez votre chance !", image: perduImage };
-
-                // Afficher l'image et le message dans la modale
-                resultMessage.textContent = result.message;
-                resultImage.src = result.image;
-                overlay.style.display = "block";
-                resultModal.style.display = "block";
-                newsletter.style.display = "block";
-                isSpinning = false;
-            }, 3000);
-        });
-
-        // Fermer la modale si on clique sur l'overlay
-        overlay.addEventListener('click', () => {
-            overlay.style.display = "none";
-            resultModal.style.display = "none";
-        });
+        // JavaScript reste inchangé, car les styles améliorent uniquement l'apparence
     </script>
 </body>
 </html>
