@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter - HappyLemon</title>
+    <title>Jeu à Gratter - Corrigé</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,15 +19,16 @@
     </style>
 </head>
 <body>
-    <h1>Jeu à Gratter - HappyLemon</h1>
+    <h1>Jeu à Gratter - Corrigé</h1>
     <canvas id="scratchCanvas" width="300" height="150"></canvas>
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
 
         const bgImage = new Image();
-        bgImage.src = "https://i.postimg.cc/NjK8mC40/gagne-hl.jpg"; // Image de fond "Gagné"
+        bgImage.src = "https://i.postimg.cc/NjK8mC40/gagne-hl.jpg"; // Image "Gagné"
 
+        // Charger et afficher l'image de fond
         bgImage.onload = () => {
             console.log("Image de fond chargée :", bgImage.src);
 
@@ -36,10 +37,11 @@
             ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
             // Ajoute une couche grise par-dessus
+            ctx.globalCompositeOperation = "source-over"; // Assure que la couche est visible
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Ajoute le texte "Grattez ici"
+            // Ajoute un texte pour guider l'utilisateur
             ctx.fillStyle = "#000";
             ctx.font = "20px Arial";
             ctx.fillText("Grattez ici", 100, 75);
@@ -51,16 +53,16 @@
         function activateScratch() {
             let isDrawing = false;
 
+            // Empêche le scrolling sur mobile
             canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
             canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
-            // Événements pour la souris
+            // Événements pour gratter
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', stopDrawing);
             canvas.addEventListener('mouseleave', stopDrawing);
 
-            // Événements pour le tactile
             canvas.addEventListener('touchstart', startDrawing);
             canvas.addEventListener('touchmove', draw);
             canvas.addEventListener('touchend', stopDrawing);
@@ -80,8 +82,8 @@
                 const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
                 const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-                // Applique l'effet de grattage
-                ctx.globalCompositeOperation = "destination-out"; // Supprime la couche grise
+                // Efface la couche grise pour révéler l'image
+                ctx.globalCompositeOperation = "destination-out";
                 ctx.beginPath();
                 ctx.arc(x, y, 20, 0, Math.PI * 2, false);
                 ctx.fill();
