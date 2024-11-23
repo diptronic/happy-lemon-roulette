@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter - HTML/CSS</title>
+    <title>Jeu à Gratter - Canvas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,66 +17,72 @@
             height: 365px;
             margin: 20px auto;
             border: 2px solid green;
-            overflow: hidden;
         }
-        .scratch-image {
+        canvas {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            background: url('https://via.placeholder.com/380x365/CCCCCC.png?text=Grattez+ici') no-repeat center center;
-            background-size: cover;
         }
-        .scratch-background {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .background-image {
             width: 100%;
             height: 100%;
-            z-index: 1;
-            background: url('https://i.imgur.com/kRhG7ix.jpeg') no-repeat center center;
-            background-size: cover;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
-    <h1>Jeu à Gratter - Test simplifié</h1>
+    <h1>Jeu à Gratter - Canvas</h1>
     <div class="scratch-container">
-        <div class="scratch-image" id="scratchLayer"></div>
-        <div class="scratch-background"></div>
+        <img src="https://i.imgur.com/kRhG7ix.jpeg" class="background-image" alt="Image Gagné">
+        <canvas id="scratchCanvas" width="380" height="365"></canvas>
     </div>
-
     <script>
-        const scratchLayer = document.getElementById('scratchLayer');
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
 
-        scratchLayer.addEventListener('mousemove', (e) => {
-            if (e.buttons === 1) { // Si le bouton gauche est cliqué
-                const rect = scratchLayer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+        // Étape 1 : Dessiner la couche grise
+        function drawMask() {
+            ctx.fillStyle = "#ccc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
-                // Créer un trou transparent dans la couche grise
-                const hole = document.createElement('div');
-                hole.style.position = 'absolute';
-                hole.style.width = '30px';
-                hole.style.height = '30px';
-                hole.style.borderRadius = '50%';
-                hole.style.backgroundColor = 'transparent';
-                hole.style.boxShadow = '0 0 0 9999px rgba(255, 255, 255, 0.5)';
-                hole.style.pointerEvents = 'none';
-                hole.style.top = `${y - 15}px`;
-                hole.style.left = `${x - 15}px`;
+        // Étape 2 : Activer le grattage
+        function activateScratch() {
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing, { passive: false });
+            canvas.addEventListener('touchmove', scratch, { passive: false });
+        }
 
-                scratchLayer.appendChild(hole);
+        function startDrawing(e) {
+            isDrawing = true;
+            scratch(e);
+        }
 
-                // Supprimer la couche entière si suffisamment de trous sont faits
-                if (scratchLayer.children.length > 100) {
-                    scratchLayer.style.visibility = 'hidden';
-                }
-            }
-        });
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function scratch(e) {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+            // Effacer la couche grise sous la zone grattée
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+            ctx.fill();
+        }
+
+        // Initialisation
+        drawMask(); // Dessiner la couche grise
+        activateScratch(); // Activer le grattage
     </script>
 </body>
 </html>
