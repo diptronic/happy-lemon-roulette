@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu à Gratter - Canvas</title>
+    <title>Jeu à gratter HappyLemon France</title>
     <style>
+        @font-face {
+            font-family: 'Candara';
+            src: url('https://fonts.cdnfonts.com/s/14217/Candara-Regular.ttf');
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Candara', Arial, sans-serif;
             text-align: center;
             background-color: #fefae0;
             margin: 0;
         }
         .scratch-container {
             position: relative;
-            width: 380px;
-            height: 365px;
+            width: 370px;
+            height: 250px;
             margin: 20px auto;
             border: 2px solid green;
         }
@@ -28,23 +32,34 @@
             height: 100%;
             object-fit: cover;
         }
+        .message {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <h1>Jeu à Gratter - Canvas</h1>
+    <h1>Jeu à gratter HappyLemon France</h1>
     <div class="scratch-container">
         <img src="https://i.imgur.com/kRhG7ix.jpeg" class="background-image" alt="Image Gagné">
-        <canvas id="scratchCanvas" width="380" height="365"></canvas>
+        <canvas id="scratchCanvas" width="370" height="250"></canvas>
     </div>
+    <div class="message" id="resultMessage"></div>
     <script>
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
+        const resultMessage = document.getElementById('resultMessage');
         let isDrawing = false;
+        let totalScratched = 0;
+        let totalPixels = 0;
 
         // Étape 1 : Dessiner la couche grise
         function drawMask() {
             ctx.fillStyle = "#ccc";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            totalPixels = imageData.data.length / 4; // Total de pixels
         }
 
         // Étape 2 : Activer le grattage
@@ -64,6 +79,7 @@
 
         function stopDrawing() {
             isDrawing = false;
+            checkCompletion();
         }
 
         function scratch(e) {
@@ -78,6 +94,36 @@
             ctx.beginPath();
             ctx.arc(x, y, 20, 0, Math.PI * 2, false);
             ctx.fill();
+
+            // Calculer le pourcentage gratté
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let scratchedPixels = 0;
+            for (let i = 3; i < imageData.data.length; i += 4) {
+                if (imageData.data[i] === 0) scratchedPixels++;
+            }
+            totalScratched = scratchedPixels;
+        }
+
+        function checkCompletion() {
+            const scratchedPercentage = (totalScratched / totalPixels) * 100;
+            if (scratchedPercentage > 60) {
+                revealResult();
+            }
+        }
+
+        function revealResult() {
+            // Effacer la couche grise restante
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Déterminer le résultat
+            const isWinner = Math.random() < 0.13; // Probabilité de gagner : 13%
+            const reward = Math.random() < 0.7 ? "un topping gratuit !" : "10% de réduction sur un prochain achat !";
+
+            if (isWinner) {
+                resultMessage.textContent = `🎉 Félicitations, vous avez gagné ${reward}`;
+            } else {
+                resultMessage.textContent = "Merci pour votre participation ! Retentez votre chance !";
+            }
         }
 
         // Initialisation
