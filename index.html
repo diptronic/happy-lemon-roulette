@@ -117,7 +117,7 @@
         function stopDrawing() {
             if (isGameCompleted) return;
             isDrawing = false;
-            checkCompletion(); // Vérifie si 50% ont été grattés
+            checkCompletion(); // Vérifie si 60% ont été grattés
         }
 
         function scratch(e) {
@@ -134,7 +134,7 @@
             ctx.fill();
         }
 
-        // Vérifier si 50% de la surface est grattée
+        // Vérifier si 60% de la surface est grattée
         function checkCompletion() {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let scratchedPixels = 0;
@@ -145,7 +145,7 @@
 
             const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
 
-            if (scratchedPercentage > 50) {
+            if (scratchedPercentage > 60) { // Seuil ajusté à 60%
                 revealResult();
             }
         }
