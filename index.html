@@ -36,7 +36,7 @@
     </div>
     <script>
         const canvas = document.getElementById('scratchCanvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true }); // Activer l'option willReadFrequently
         let isDrawing = false;
         let isRevealed = false;
 
