@@ -1,78 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Grattage - Correctif</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #fefae0;
-        }
-        canvas {
-            margin: 20px auto;
-            border: 2px solid green;
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <h1>Test Grattage - Correctif</h1>
-    <canvas id="testCanvas" width="380" height="365"></canvas>
-    <script>
-        const canvas = document.getElementById('testCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Variables de gestion
-        let isDrawing = false;
-
-        // Étape 1 : Dessiner le fond rouge
-        function drawBackground() {
-            ctx.fillStyle = "red";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Étape 2 : Ajouter la couche grise
-        function drawMask() {
-            ctx.fillStyle = "#ccc";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Étape 3 : Activer le grattage
-        function activateScratch() {
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mousemove', draw);
-
-            function startDrawing() {
-                isDrawing = true;
+<script>
+    $(document).ready(function () {
+        $('#scratchPad').wScratchPad({
+            size: 30, // Taille du "grattoir"
+            bg: 'https://i.imgur.com/kRhG7ix.jpeg', // Image de fond (Gagné)
+            fg: 'https://via.placeholder.com/380x365/CCCCCC.png?text=Grattez+ici', // Couche grise
+            scratchMove: function (e, percent) {
+                if (percent > 50) { // Si plus de 50% gratté
+                    console.log('50% gratté');
+                    $(this).wScratchPad('clear'); // Efface complètement la couche grise
+                }
             }
-
-            function stopDrawing() {
-                isDrawing = false;
-            }
-
-            function draw(e) {
-                if (!isDrawing) return;
-
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                // Effacer la couche grise uniquement dans la zone touchée
-                ctx.globalCompositeOperation = "destination-out";
-                ctx.beginPath();
-                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
-                ctx.fill();
-                ctx.globalCompositeOperation = "source-over"; // Rétablir le mode normal
-            }
-        }
-
-        // Initialisation
-        drawBackground(); // Couche rouge
-        drawMask(); // Couche grise
-        activateScratch(); // Activer le grattage
-    </script>
-</body>
-</html>
+        });
+    });
+</script>
